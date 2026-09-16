@@ -1,106 +1,177 @@
 # Government Degree College Zaim — Website & Management Portal
 
-The public website and portal front-end for the **Government College Website & Management Portal**,
-built to the *Software Requirements Specification* and the *Detailed Feature Proposal* prepared for the
-7th-semester Computer Science team project.
+A full-stack college portal: public website plus student, faculty and administration
+dashboards, built as a **Next.js 16 / React 19** application on **PostgreSQL**.
 
-This repository contains **Phase 1 of the roadmap in the proposal**: the complete presentation layer —
-the public website and the role-specific portal interfaces — implemented as a responsive, accessible,
-bilingual static site with no build step and no runtime dependencies.
+Everything on the site comes from the database. Publishing a notice in the admin panel puts it on the
+home page immediately; a teacher marking attendance changes the student's percentage; an administrator
+uploading event photographs and videos from their computer makes them visible to every visitor.
 
 ---
 
-## Contents
+## Requirements
 
-| Area | Pages |
-|---|---|
-| **Public website** | Home, About (history, vision, mission, principal's message, administration), Departments, Department detail, Programmes/Timetable/Examinations, Faculty directory, Admissions, Scholarships, Notices, Events, Gallery, Digital library, Facilities, Downloads, Student services, Alumni & careers, Contact, Search |
-| **Portal** | Login (four roles), Student dashboard, Faculty dashboard, Administration dashboard |
-| **Statutory** | Sitemap, Accessibility statement, Privacy policy, 404 |
+| Software | Version | Notes |
+|---|---|---|
+| Node.js | 20 or newer | `node -v` |
+| PostgreSQL | 14 or newer | Must be running before you start the app |
+| npm | 10 or newer | Ships with Node |
 
-26 pages in total.
+## Setup
 
-## Running it
-
-No build, no install, no server required:
+**1. Install dependencies**
 
 ```bash
-git clone https://github.com/amnaanamds-cmyk/GDC-zaim-official--website1.git
-cd GDC-zaim-official--website1
-# open index.html in a browser, or serve the folder:
-python3 -m http.server 8000     # then visit http://localhost:8000
+npm install
 ```
 
-A local server is recommended over `file://` so that query-string pages
-(`department.html?id=…`, `notices.html?id=…`) and relative links behave exactly as they will in production.
+**2. Create the database**
 
-**Deploying to GitHub Pages:** Settings → Pages → *Deploy from a branch* → select this branch, folder `/ (root)`.
-The site is served as-is; `.nojekyll` stops GitHub from reprocessing the files.
+```bash
+# as the postgres superuser
+createuser gdc --pwprompt --createdb
+createdb gdc_zaim --owner=gdc
+```
+
+On Windows, use pgAdmin (or the SQL Shell) to create a login role `gdc` and a database `gdc_zaim`
+owned by it.
+
+**3. Point the app at it**
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` and set your own password:
+
+```ini
+DATABASE_URL="postgresql://gdc:YOUR_PASSWORD@127.0.0.1:5432/gdc_zaim?schema=public"
+```
+
+**4. Create the tables and fill them with the college's content**
+
+```bash
+npx prisma migrate dev     # creates all 28 tables
+npm run db:seed            # departments, faculty, courses, students, notices, events, books…
+```
+
+**5. Run it**
+
+```bash
+npm run dev                # http://localhost:3000
+```
+
+For a production build: `npm run build && npm start`.
+
+## Demo accounts
+
+Seeded by `npm run db:seed`. **Password for all four: `gdc12345`.**
+
+| Role | Sign in with | Lands on |
+|---|---|---|
+| Administrator | `registrar` | `/portal/admin` |
+| Teacher | `bilal.ahmad` | `/portal/teacher` |
+| Student | `2023-GDCZ-CS-045` | `/portal/student` |
+| Library staff | `librarian` | `/portal/admin` |
+
+Change these before the site is used for anything real.
+
+## What each role can do
+
+**Administrator**
+- Publish notices (with category, department targeting, scheduled publication and expiry) — they appear on the public site instantly
+- **Upload event photographs and videos from the local drive**, and delete them
+- Verify marks submitted by teachers, which is what makes results visible to students
+- See enrolment figures, average attendance, open complaints and the activity log
+
+**Teacher**
+- Mark daily attendance for assigned courses; saving again for the same date updates it
+- Enter sessional and mid-term marks and submit them for verification
+- See per-student attendance percentages, low-attendance flags and grade distribution
+
+**Student**
+- Attendance per course, computed from the attendance records, with a warning below 75%
+- GPA computed from verified marks using the published grading scale
+- Marks, and notices targeted at their department
+
+**Visitor (no account)**
+- Every public page, site-wide search, event photographs and videos
+- Submit an admission application with document upload, a complaint, a certificate request (each returns a tracking reference) and a general enquiry
+
+## Event media upload
+
+The feature lives on `/events` (and `/portal/admin/media`). The button is visible only to a signed-in
+administrator; everyone else sees a sign-in hint.
+
+- Choose files or drag them in; photos and videos both supported
+- Validated for type and size **in the browser and again on the server** — the server check is the one that counts
+- JPG, PNG, WebP, GIF, AVIF up to 8 MB; MP4, WebM, OGG, MOV up to 100 MB; 12 files per upload
+- A still is captured from each video in the browser and stored as its thumbnail
+- Each file gets a description used as alt text
+- Files are written to `public/uploads` under generated names — never the name the browser supplied — with metadata in Postgres
 
 ## Project structure
 
 ```
-index.html … search.html      Public pages (standalone HTML)
-portal/                       login.html, student.html, teacher.html, admin.html
-assets/css/styles.css         Design system: tokens, components, light/dark, LTR/RTL, print
-assets/js/data.js             ALL site content — the single source of truth
-assets/js/main.js             Navigation, theme, language, search index, shared helpers
-assets/img/                   Campus photography (hero crop, gallery thumbnail, full-size)
-docs/requirements-coverage.md Which SRS requirements this phase implements
+app/
+  (public)/            Public website — home, about, departments, academics, faculty,
+                       admissions, scholarships, notices, events, gallery, library,
+                       facilities, downloads, student services, alumni, contact, search
+  portal/login/        Sign-in page
+  portal/(dash)/       Protected dashboards: admin, teacher, student
+  api/                 Route handlers for file uploads (event media, admission documents)
+  actions/             Server actions: auth, admin, teaching, public forms
+components/            Shared React components (header, nav, uploader, media gallery…)
+lib/
+  db.ts                Prisma client
+  auth.ts              Sessions, password hashing, RBAC helpers
+  grading.ts           Grade scale, GPA and attendance rules — the single source of truth
+  search.ts            Site-wide search
+  i18n.ts              English / Urdu strings
+prisma/
+  schema.prisma        28 models covering every SRS module
+  seed.ts              Seeds content and demo accounts
+  seed-data.ts         The college's content
+public/uploads/        Uploaded media (gitignored — runtime data)
 ```
 
-### Editing content
+## Security
 
-Almost nothing is hard-coded in the pages. Departments, faculty, notices, events, programmes, books,
-downloads, scholarships, services, facilities and gallery items all live in **`assets/js/data.js`**, and
-every page — plus the site-wide search index — renders from it. To publish a notice, add an object to the
-`notices` array; it appears on the home page, the notice board, the relevant department page and in search
-results automatically.
+- Passwords hashed with bcrypt (12 rounds); never stored or logged in plain text
+- Sessions stored in the database, referenced by an `httpOnly`, `sameSite=lax` cookie
+- Accounts lock for 15 minutes after 5 failed sign-in attempts
+- Sign-in failures return the same message whether the account exists or not, and spend the same time, so the form cannot be used to discover usernames
+- **Every role check runs on the server.** Hiding a button is not a permission check: posting directly to the upload API as a student or anonymous visitor returns 403
+- Uploads validated for MIME type and size server-side, written under generated filenames
+- All form input validated with Zod on the server; grades and merit scores are computed server-side and never accepted from the browser
+- Administrative actions recorded in an activity log with the responsible account
 
-When the Phase 2 API is ready, replace the literals in `data.js` with `fetch()` calls to the REST
-endpoints. The page-level render functions do not need to change.
+## Useful commands
 
-The site header and footer are written into each page directly (standard for a dependency-free static
-site). If you change the navigation, change it in every page — or generate the pages from a template once
-you move to a framework.
-
-## What is implemented
-
-- **Responsive layout** — single-column on phones, no horizontal scrolling, verified from 320px upward.
-- **Light and dark themes** — follows the system preference, overridable, remembered per browser.
-- **English / Urdu with RTL** — the language toggle switches navigation, headings and key labels, sets
-  `dir="rtl"`, and isolates Latin runs (phone numbers, dates, references) so they are not reordered.
-- **Site-wide search** — one index built from `data.js`, covering departments, faculty, notices, events,
-  programmes, library titles, documents, scholarships, facilities and student services.
-- **Filtering and search** on departments, faculty, notices, gallery, library catalogue and downloads.
-- **Portal dashboards** — attendance with low-attendance alerts, GPA trend, marks tables, assignment
-  tracking, library account, attendance marking, marks entry with admin verification, admissions queue,
-  activity log and an RBAC permission matrix.
-- **Accessibility** — skip link, landmarks, one `h1` per page, labelled controls, keyboard-operable menus,
-  tabs and gallery, visible focus, `prefers-reduced-motion` support, and colour contrast meeting WCAG 2.1
-  AA (verified for every text/background pair in the palette, both themes).
-- **Print stylesheet** for notices, timetables and result pages.
-
-## What is not implemented yet
-
-This phase has **no backend**. Forms (admission application, complaints, service requests, event and
-alumni registration, result enquiry, login) validate input and return a reference number, but nothing is
-stored, and the portal login accepts any credentials and opens the sample dashboard for the chosen role.
-Every such form says so on the page.
-
-Phase 2 (REST API, database, real authentication, RBAC enforcement, file uploads) and Phase 3 (QR codes,
-AI chatbot, academic-risk analytics, semantic search) are described in the proposal and mapped in
-[`docs/requirements-coverage.md`](docs/requirements-coverage.md).
+```bash
+npm run dev          # development server
+npm run build        # production build (runs TypeScript checks)
+npm run typecheck    # types only
+npm run db:seed      # re-seed (clears and refills the tables it owns)
+npm run db:reset     # drop, re-migrate and re-seed — wipes everything
+npm run db:studio    # browse the database in Prisma Studio
+```
 
 ## Content note
 
-The campus photograph in `assets/img/` is genuine and appears on the home hero, in the gallery, and on the
-About and Contact pages. Everything else — the principal's name, faculty, statistics, notices, contact
-numbers and the remaining gallery tiles — is a realistic placeholder. Replace them with official records in `assets/js/data.js` and the page copy
-before this site goes live. The privacy policy and accessibility statement should be reviewed and approved
-by the college administration.
+The campus photograph in `public/images` is genuine. Names, statistics, notices, contact numbers and the
+remaining gallery tiles are realistic placeholders — replace them in `prisma/seed-data.ts` (or edit
+records through the admin panel) before the site goes live. The privacy and accessibility statements
+should be reviewed and approved by the college administration.
 
-## Browser support
+## Accessibility
 
-Current Chrome, Edge, Firefox and Safari, including mobile. The layout uses CSS grid, custom properties and
-logical properties; there is no JavaScript framework and no polyfill.
+Server-rendered HTML that works without JavaScript for reading and filtering; one `h1` and a `main`
+landmark per page; labelled form controls; keyboard-operable menus and dialogs; visible focus rings;
+WCAG 2.1 AA contrast in both themes; `prefers-reduced-motion` respected; English/Urdu with full RTL.
+Verified across all 22 public routes at 390px and 1280px.
+
+## History
+
+This repository previously held a static HTML version of the same site. It is preserved in git history
+at commit `29ee449` if you ever need it.

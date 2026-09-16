@@ -1,0 +1,464 @@
+// Government Degree College Zaim — Website & Management Portal
+// Data layer for the SRS modules. One schema, one source of truth.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/* ------------------------------------------------------------------ *
+ * Accounts, sessions, audit  (SRS §25 Security, §5 Admin panel)
+ * ------------------------------------------------------------------ */
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+  LIBRARIAN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  passwordHash  String
+  name          String
+  role          Role
+  active        Boolean   @default(true)
+  failedLogins  Int       @default(0)
+  lockedUntil   DateTime?
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions          Session[]
+  teacher           Faculty?
+  student           Student?
+  notices           Notice[]          @relation("NoticeAuthor")
+  uploads           EventMedia[]
+  activity          ActivityLog[]
+  marksSubmitted    Mark[]            @relation("MarkSubmittedBy")
+  marksVerified     Mark[]            @relation("MarkVerifiedBy")
+  attendanceMarked  AttendanceRecord[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  userAgent String?
+  ip        String?
+
+  @@index([userId])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+/* ------------------------------------------------------------------ *
+ * Academic structure  (SRS §1, §9, §10)
+ * ------------------------------------------------------------------ */
+model Department {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  nameUr          String
+  icon            String
+  intro           String
+  hodName         String
+  hodDesignation  String
+  established     Int
+  email           String
+  courseTitles    String[]
+  facilities      String[]
+  achievements    String[]
+  studentCount    Int      @default(0)
+  facultyCount    Int      @default(0)
+  order           Int      @default(0)
+
+  faculty     Faculty[]
+  programmes  Programme[]
+  courses     Course[]
+  notices     Notice[]
+  complaints  Complaint[]
+}
+
+model Faculty {
+  id             String      @id @default(cuid())
+  name           String
+  designation    String
+  qualification  String
+  specialization String
+  email          String      @unique
+  departmentId   String?
+  department     Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  userId         String?     @unique
+  user           User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  order          Int         @default(0)
+
+  courses Course[]
+}
+
+model Programme {
+  id           String     @id @default(cuid())
+  code         String     @unique
+  name         String
+  level        String
+  duration     String
+  seats        Int
+  eligibility  String
+  fee          String
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  students     Student[]
+  applications Application[]
+}
+
+model Course {
+  id           String     @id @default(cuid())
+  code         String     @unique
+  title        String
+  creditHours  Int        @default(3)
+  semester     Int
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  teacherId    String?
+  teacher      Faculty?   @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+
+  enrollments Enrollment[]
+}
+
+model Student {
+  id          String    @id @default(cuid())
+  regNo       String    @unique
+  name        String
+  semester    Int
+  programmeId String
+  programme   Programme @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  userId      String?   @unique
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  duesCleared Boolean   @default(true)
+
+  enrollments Enrollment[]
+}
+
+model Enrollment {
+  id        String  @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  semester  Int
+  session   String  @default("Fall 2026")
+
+  attendance AttendanceRecord[]
+  mark       Mark?
+
+  @@unique([studentId, courseId, session])
+}
+
+/* ------------------------------------------------------------------ *
+ * Attendance and results  (SRS §7, §8)
+ * ------------------------------------------------------------------ */
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LEAVE
+}
+
+model AttendanceRecord {
+  id           String           @id @default(cuid())
+  enrollmentId String
+  enrollment   Enrollment       @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  date         DateTime         @db.Date
+  status       AttendanceStatus
+  markedById   String?
+  markedBy     User?            @relation(fields: [markedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime         @default(now())
+
+  @@unique([enrollmentId, date])
+  @@index([date])
+}
+
+enum MarkStatus {
+  DRAFT
+  SUBMITTED
+  VERIFIED
+}
+
+model Mark {
+  id            String     @id @default(cuid())
+  enrollmentId  String     @unique
+  enrollment    Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  sessional     Float?
+  midterm       Float?
+  finalExam     Float?
+  status        MarkStatus @default(DRAFT)
+  submittedById String?
+  submittedBy   User?      @relation("MarkSubmittedBy", fields: [submittedById], references: [id], onDelete: SetNull)
+  verifiedById  String?
+  verifiedBy    User?      @relation("MarkVerifiedBy", fields: [verifiedById], references: [id], onDelete: SetNull)
+  updatedAt     DateTime   @updatedAt
+}
+
+/* ------------------------------------------------------------------ *
+ * Notices and events  (SRS §6, §15)
+ * ------------------------------------------------------------------ */
+model Notice {
+  id           String      @id @default(cuid())
+  title        String
+  titleUr      String?
+  body         String
+  category     String
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  audience     String      @default("ALL")
+  pinned       Boolean     @default(false)
+  publishAt    DateTime    @default(now())
+  expiresAt    DateTime?
+  fileUrl      String?
+  authorId     String?
+  author       User?       @relation("NoticeAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  createdAt    DateTime    @default(now())
+
+  @@index([publishAt])
+}
+
+model Event {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  title            String
+  summary          String
+  date             DateTime @db.Date
+  time             String
+  venue            String
+  category         String
+  registrationOpen Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  media         EventMedia[]
+  registrations EventRegistration[]
+}
+
+enum MediaKind {
+  IMAGE
+  VIDEO
+}
+
+/// Photographs and videos of college events, uploaded by an administrator
+/// from their local drive and served to every visitor.
+model EventMedia {
+  id           String    @id @default(cuid())
+  eventId      String?
+  event        Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  kind         MediaKind
+  title        String
+  description  String
+  filePath     String
+  posterPath   String?
+  mime         String
+  size         Int
+  duration     Float?
+  uploadedById String?
+  uploadedBy   User?     @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime  @default(now())
+
+  @@index([eventId])
+}
+
+model EventRegistration {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  studentName String
+  regNo       String
+  createdAt   DateTime @default(now())
+}
+
+/* ------------------------------------------------------------------ *
+ * Library, documents, scholarships  (SRS §10, §12, §21)
+ * ------------------------------------------------------------------ */
+model Book {
+  id        String @id @default(cuid())
+  title     String
+  author    String
+  isbn      String @unique
+  category  String
+  copies    Int
+  available Int
+  shelf     String
+}
+
+model Download {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  fileType    String   @default("PDF")
+  size        String
+  filePath    String?
+  publishedAt DateTime @default(now())
+}
+
+model Scholarship {
+  id          String    @id @default(cuid())
+  name        String
+  provider    String
+  covers      String
+  eligibility String
+  deadline    DateTime?
+  deadlineNote String?
+}
+
+/* ------------------------------------------------------------------ *
+ * Student-facing workflows  (SRS §2, §13, §14)
+ * ------------------------------------------------------------------ */
+enum RequestStage {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  READY
+  DELIVERED
+}
+
+model ServiceRequest {
+  id          String       @id @default(cuid())
+  ref         String       @unique
+  studentName String
+  regNo       String
+  serviceType String
+  purpose     String
+  contact     String
+  stage       RequestStage @default(SUBMITTED)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum ComplaintStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  RESOLVED
+}
+
+model Complaint {
+  id           String          @id @default(cuid())
+  ref          String          @unique
+  category     String
+  departmentId String?
+  department   Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  details      String
+  contact      String?
+  status       ComplaintStatus @default(SUBMITTED)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  SHORTLISTED
+  ACCEPTED
+  REJECTED
+}
+
+model Application {
+  id          String            @id @default(cuid())
+  ref         String            @unique
+  name        String
+  fatherName  String
+  cnic        String
+  dob         DateTime          @db.Date
+  phone       String
+  email       String?
+  programmeId String
+  programme   Programme         @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  marks       Int
+  totalMarks  Int               @default(1100)
+  address     String
+  meritScore  Float?
+  status      ApplicationStatus @default(SUBMITTED)
+  createdAt   DateTime          @default(now())
+
+  documents ApplicationDocument[]
+}
+
+model ApplicationDocument {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  filePath      String
+  originalName  String
+  mime          String
+  size          Int
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+/* ------------------------------------------------------------------ *
+ * Site content  (SRS §1, §16, §17, §20)
+ * ------------------------------------------------------------------ */
+model GalleryItem {
+  id        String   @id @default(cuid())
+  title     String
+  category  String
+  imagePath String?
+  tone      String   @default("a")
+  alt       String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Facility {
+  id     String @id @default(cuid())
+  name   String
+  icon   String
+  detail String
+  order  Int    @default(0)
+}
+
+model Alumnus {
+  id    String @id @default(cuid())
+  name  String
+  batch String
+  role  String
+  order Int    @default(0)
+}
+
+model CareerOpportunity {
+  id       String    @id @default(cuid())
+  title    String
+  org      String
+  type     String
+  deadline DateTime?
+}
+
+model AdmissionStage {
+  id     String @id @default(cuid())
+  stage  String
+  dates  String
+  status String
+  order  Int    @default(0)
+}

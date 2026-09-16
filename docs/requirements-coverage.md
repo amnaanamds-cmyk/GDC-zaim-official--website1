@@ -1,67 +1,65 @@
-# Requirements coverage — Phase 1 (Presentation Layer)
+# Requirements coverage — full-stack build
 
 How this repository maps onto the modules of the *Complete Software Requirements Specification* and the
 phases of the *Detailed Feature Proposal*.
 
-Legend: **Built** = working in this repository · **UI ready** = the interface exists and is wired to the
-sample data, but needs the Phase 2 API to persist or compute anything · **Phase 2/3** = not started, by design.
+Legend: **Live** = working against the database · **Partial** = core works, extensions remain ·
+**Future** = not started, by design.
 
 | # | SRS module | Status | Where |
 |---|---|---|---|
-| 1 | Public website / visitor side | **Built** | `index.html`, `about.html`, `departments.html`, `department.html`, `facilities.html` |
-| 2 | Admissions | **UI ready** — announcements, eligibility, schedule, merit weighting, documents, online application form with file upload validation, application tracking | `admissions.html` |
-| 3 | Student portal | **UI ready** — dashboard, subject-wise attendance with low-attendance alert, GPA trend, marks, assignments, timetable, library account, dues | `portal/student.html` |
-| 4 | Teacher / faculty portal | **UI ready** — courses, attendance marking, marks entry submitted for verification, assignments, grade distribution | `portal/teacher.html` |
-| 5 | Admin panel | **UI ready** — admissions queue, enrolment analytics, notice publishing, result verification, complaints, activity log, RBAC matrix | `portal/admin.html` |
-| 6 | Notice & announcement system | **Built** — categories, department targeting, search, pinned/urgent notices, single-notice view, subscription form | `notices.html`, home page strip |
-| 7 | Examination & result management | **UI ready** — examination calendar, rules, result enquiry, grading scheme; teacher entry → admin verification flow is modelled in the portals | `academics.html#examinations` |
-| 8 | Attendance management | **UI ready** — percentage display, threshold warnings, teacher marking sheet | `portal/student.html`, `portal/teacher.html` |
-| 9 | Timetable management | **Built** (display) — per-department, per-semester weekly timetable with room allocation. Automatic generation and conflict detection are Phase 2 | `academics.html#timetable` |
-| 10 | Digital library | **Built** (catalogue) — search by title/author/ISBN/subject, availability, shelf, borrowing rules, reservation form | `library.html` |
-| 11 | Fees & finance | **Built** (information) — fee structure per programme, challan download, dues status in the student portal. Online payment is explicitly out of scope | `academics.html#programs`, `downloads.html` |
-| 12 | Scholarship module | **Built** — open schemes, eligibility, deadlines with open/closed state, college concessions, application guidance | `scholarships.html` |
-| 13 | Student services | **Built** — six certificate types with turnaround times, request form, five-stage tracked workflow | `student-services.html` |
-| 14 | Complaint / feedback | **UI ready** — categorised submission with department routing, anonymous option, reference number, admin queue with ageing | `contact.html#complaint`, `portal/admin.html#complaints` |
-| 15 | Events management | **Built** — upcoming events, academic calendar, past events, registration form | `events.html` |
-| 16 | Alumni management | **Built** — profiles, registration, association activities | `alumni.html` |
-| 17 | Career & jobs | **Built** — opportunities table, guidance sections, employer note | `alumni.html#careers` |
-| 18 | Hostel management | **Built** (information) — capacity, allocation criteria, application form reference | `facilities.html`, `student-services.html` |
-| 19 | Transport management | **Built** (information) — four routes with coverage and departure times | `facilities.html` |
-| 20 | College facilities | **Built** — ten facilities, laboratory inventory, FAQs | `facilities.html` |
-| 21 | Document management | **Built** (index) — categorised, searchable document list with type, size and publication date | `downloads.html` |
-| 22 | Search system | **Built** — one index across departments, faculty, notices, events, programmes, books, documents, scholarships, facilities and services, with scoring and suggestions | `search.html`, `assets/js/main.js` |
-| 23 | Notification system | **Partial** — on-site notices and portal notification lists are built; email/SMS/push delivery is Phase 2 | `notices.html`, portals |
-| 24 | AI features | **Phase 3** | — |
-| 25 | Security requirements | **Partial** — no secrets in the client, no inline event handlers, all rendered strings HTML-escaped, `portal/` excluded from crawling, the RBAC model is documented. Hashing, sessions, CSRF, rate limiting and audit logging belong to the Phase 2 server | `assets/js/main.js`, `portal/admin.html#faculty` |
-| 26 | Accessibility | **Built** — see the Accessibility section below | `accessibility.html` |
-| 27 | Multi-language | **Partial** — English/Urdu toggle with RTL for navigation, headings and key labels; full body-text translation is a content task | `assets/js/main.js` |
-| 28 | Analytics dashboard | **UI ready** — enrolment, applications, attendance, complaints and grade-distribution charts | `portal/admin.html` |
-| 29 | Advanced reporting | **Phase 2** — export buttons are present but not wired | `portal/teacher.html` |
-| 30 | QR code system | **Phase 3** | — |
-| 31 | Additional proposed features | Parent portal, course evaluation, FYP repository and societies are **Phase 2/3**. The FYP archive is referenced in the library page | `library.html` |
+| 1 | Public website / visitor side | **Live** | `app/(public)/` — every page reads from Postgres |
+| 2 | Admissions | **Live** — online application with document upload, server-side merit calculation, tracking reference, admin queue | `app/(public)/admissions`, `app/api/admissions` |
+| 3 | Student portal | **Live** — attendance %, low-attendance alerts, GPA, marks, notices, all computed from records | `app/portal/(dash)/student` |
+| 4 | Teacher portal | **Live** — attendance marking (upsert per date), marks entry, submission for verification, grade distribution | `app/portal/(dash)/teacher` |
+| 5 | Admin panel | **Live** — notice publishing, result verification, event media, enrolment analytics, complaints, activity log | `app/portal/(dash)/admin` |
+| 6 | Notice & announcement system | **Live** — categories, department targeting, scheduled publication, expiry, search, pinning | `app/(public)/notices`, `NoticeComposer` |
+| 7 | Examination & result management | **Live** — teacher submits → admin verifies → student sees; GPA computed from the published grade scale | `lib/grading.ts`, teacher + admin + student portals |
+| 8 | Attendance management | **Live** — daily records, per-course and overall percentages, threshold warnings | `app/actions/teaching.ts` |
+| 9 | Timetable management | **Partial** — course catalogue per department and semester is live; automatic generation and conflict detection remain | `app/(public)/academics#timetable` |
+| 10 | Digital library | **Partial** — catalogue with live search, availability and categories; issue/return workflow remains | `app/(public)/library` |
+| 11 | Fees & finance | **Partial** — fee structure per programme and dues status in the student portal; payment gateway explicitly out of scope | `Programme.fee`, `Student.duesCleared` |
+| 12 | Scholarship module | **Live** (listing) — schemes with deadlines and open/closed state | `app/(public)/scholarships` |
+| 13 | Student services | **Live** — six certificate types, requests stored with a reference, five-stage tracking that reads the real record | `app/(public)/student-services` |
+| 14 | Complaint / feedback | **Live** — categorised, routed to a department, anonymous option, reference number, admin queue | `app/actions/public.ts`, admin dashboard |
+| 15 | Events management | **Live** — events, registration, **photo and video upload by administrators** | `app/(public)/events`, `app/api/events/media` |
+| 16 | Alumni management | **Live** (directory) | `app/(public)/alumni` |
+| 17 | Career & jobs | **Live** (listings) | `app/(public)/alumni#careers` |
+| 18 | Hostel management | **Partial** — information published; allocation workflow remains | `app/(public)/facilities` |
+| 19 | Transport management | **Partial** — routes and timings published | `app/(public)/facilities` |
+| 20 | College facilities | **Live** | `app/(public)/facilities` |
+| 21 | Document management | **Live** for uploads (event media, admission documents); download index is live, file attachment for prospectus/forms remains | `app/api/events/media`, `app/(public)/downloads` |
+| 22 | Search system | **Live** — one server-side query across nine content types | `lib/search.ts` |
+| 23 | Notification system | **Partial** — on-site notices and portal notification lists are live; email/SMS/push delivery remains | `Notice.audience` |
+| 24 | AI features | **Future** | — |
+| 25 | Security requirements | **Live** — bcrypt hashing, server-side sessions, RBAC enforced on the server, account lockout, Zod validation, upload validation, activity log. HTTPS is a deployment concern | `lib/auth.ts`, route handlers |
+| 26 | Accessibility | **Live** — see the Accessibility section of the README | `app/(public)/accessibility` |
+| 27 | Multi-language | **Partial** — English/Urdu with RTL for navigation, headings and labels, chosen server-side via cookie | `lib/i18n.ts` |
+| 28 | Analytics dashboard | **Live** — enrolment by department, attendance averages, verification queue, media storage | `app/portal/(dash)/admin` |
+| 29 | Advanced reporting | **Future** — export to PDF/Excel not implemented | — |
+| 30 | QR code system | **Future** | — |
+| 31 | Additional proposed features | **Future** — parent portal, course evaluation, FYP repository, societies | — |
 
-## Proposal roadmap
+## Roadmap status
 
-- **Phase 1 — Core system:** public website, portal interfaces, notices, results display, timetable. **Complete in this repository.**
-- **Phase 2 — Recommended features:** REST API, relational database, authentication and RBAC enforcement, document upload and storage, automated merit lists, GPA/CGPA computation, timetable conflict detection, library reservations and fines, complaint routing, email/SMS notification.
-- **Phase 3 — Future scope:** QR-based identity, attendance, library and event check-in; AI chatbot; academic-risk analytics; semantic search; advanced result analytics.
+- **Phase 1 — Core system.** Complete.
+- **Phase 2 — Recommended features.** Largely complete: REST/server actions, PostgreSQL, authentication
+  and RBAC, document upload, GPA computation, complaint routing, library catalogue, tracked service
+  requests. Outstanding: automatic timetable generation with conflict detection, library issue/return
+  and fines, email/SMS notification, PDF/Excel export.
+- **Phase 3 — Future scope.** Not started: QR codes, AI chatbot, academic-risk analytics, semantic search.
 
-## Accessibility measures in this phase
+## How the guarantees were verified
 
-- Skip link, `<main>` landmark and a single `h1` on every page.
-- All 26 pages checked for: one `h1`, present landmarks, labelled form controls, named links and buttons.
-- Colour contrast verified for every text/background pair in both themes against WCAG 2.1 AA (4.5:1 for
-  normal text, 3:1 for large text). The accent colour used for small text is a separate, darker token
-  (`--accent-text`) for exactly this reason.
-- Dropdown menus, tabs and the gallery lightbox are operable by keyboard, with `Escape` to close and
-  focus returned to the trigger.
-- `prefers-reduced-motion` disables scroll reveals, counters and smooth scrolling.
-- Layout verified at 320px–1280px with no horizontal overflow.
-
-## Known limitations
-
-1. Lists are rendered client-side from `data.js`, so pages need JavaScript; a `<noscript>` message points
-   to alternatives. Server-side rendering is a Phase 2 consideration for search-engine indexing.
-2. Urdu translation covers interface labels rather than full body text.
-3. One real campus photograph is in use (hero, gallery, About and Contact pages); the remaining
-   gallery tiles and all document files are still placeholders pending official assets.
+- Production build passes with TypeScript checks across all 30 routes.
+- A scripted browser run signs in as teacher, admin and student in turn: marks attendance, submits marks,
+  verifies them as admin, publishes a notice, and confirms the notice reaches the public site and the
+  student dashboard — 15 assertions, all passing.
+- Upload tested with a real photograph and a real video: files land on disk under generated names, the
+  video poster frame is captured and stored, and both are served over HTTP and visible to a logged-out
+  visitor.
+- Authorisation probed directly against the API: anonymous and student `POST`/`DELETE` both return 403,
+  and a student visiting `/portal/admin` is redirected to their own dashboard.
+- All 22 public routes checked for console errors, single `h1`, `main` landmark, labelled controls, named
+  links and buttons, image alt text, and horizontal overflow at 390px and 1280px.
+- Data confirmed to survive a full server restart.
