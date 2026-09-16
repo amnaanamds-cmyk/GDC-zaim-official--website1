@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-base="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal Login | Government Degree College Zaim</title>
+<meta name="description" content="Sign in to the student, faculty, administration or library portal of Government Degree College Zaim.">
+<meta name="theme-color" content="#0a3b2a">
+<meta property="og:title" content="Portal Login | Government Degree College Zaim">
+<meta property="og:description" content="Sign in to the student, faculty, administration or library portal of Government Degree College Zaim.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 57 12v22c0 14-11 24-25 27C18 58 7 48 7 34V12L32 3Z' fill='%230a3b2a' stroke='%23c8a24a' stroke-width='3'/%3E%3Cpath d='M20 40V27l12-7 12 7v13' fill='none' stroke='%23c8a24a' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap">
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script>
+  /* Apply the stored theme/language before paint to avoid a flash */
+  (function () {
+    try {
+      var t = localStorage.getItem('gdc-theme');
+      if (t) document.documentElement.setAttribute('data-theme', t);
+      if (localStorage.getItem('gdc-lang') === 'ur') {
+        document.documentElement.setAttribute('lang', 'ur');
+        document.documentElement.setAttribute('dir', 'rtl');
+      }
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body class="login-page">
+
+  
+
+  <main id="main">
+    <div class="login-card">
+      <div class="text-center" style="margin-bottom:1.5rem">
+        <svg viewBox="0 0 64 64" style="width:56px;height:56px;margin:0 auto" role="img" aria-label="GDC Zaim crest">
+          <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#157954"/><stop offset="1" stop-color="#0a3b2a"/></linearGradient></defs>
+          <path d="M32 3 57 12v22c0 14-11 24-25 27C18 58 7 48 7 34V12L32 3Z" fill="url(#lg1)" stroke="#c8a24a" stroke-width="2.5"/>
+          <path d="M20 40V27l12-7 12 7v13" fill="none" stroke="#c8a24a" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M15 43h34" stroke="#c8a24a" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <h1 style="font-size:1.4rem;margin:.9rem 0 .25rem">Portal Login</h1>
+        <p class="text-muted" style="font-size:.9rem;margin:0">Government Degree College Zaim</p>
+      </div>
+
+      <div class="role-switch" role="group" aria-label="Select your role">
+        <button type="button" data-role="student" aria-pressed="true">Student</button>
+        <button type="button" data-role="teacher" aria-pressed="false">Teacher</button>
+        <button type="button" data-role="admin" aria-pressed="false">Admin</button>
+        <button type="button" data-role="library" aria-pressed="false">Library</button>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="stack">
+          <div class="field">
+            <label for="login-id" id="login-id-label">Registration number</label>
+            <input type="text" id="login-id" required autocomplete="username" placeholder="2023-GDCZ-CS-045">
+          </div>
+          <div class="field">
+            <label for="login-pw">Password</label>
+            <input type="password" id="login-pw" required autocomplete="current-password" placeholder="••••••••">
+          </div>
+          <div class="split" style="font-size:.88rem">
+            <label style="display:flex;gap:.45rem;align-items:center;font-weight:500">
+              <input type="checkbox" id="remember" style="width:auto"> Keep me signed in
+            </label>
+            <a href="#reset" id="forgot">Forgot password?</a>
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" type="submit">Sign in</button>
+        </div>
+        <div class="form-status" id="login-status" tabindex="-1" hidden></div>
+      </form>
+
+      <div class="callout" style="margin-top:1.5rem;font-size:.86rem">
+        <p class="mb-0"><strong>Demonstration portal.</strong> Authentication is not yet connected to the
+          backend, so any value signs you in to the sample dashboard for the selected role. The production
+          build uses hashed passwords, server-side sessions, role-based access control and account lockout
+          after repeated failed attempts.</p>
+      </div>
+
+      <p class="text-center" style="margin:1.5rem 0 0;font-size:.88rem">
+        <a href="../index.html">&larr; Back to the college website</a>
+      </p>
+    </div>
+
+  </main>
+
+  
+
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/main.js"></script>
+<script>
+  (function () {
+    var role = 'student';
+    var labels = {
+      student: ['Registration number', '2023-GDCZ-CS-045', 'student.html'],
+      teacher: ['Faculty ID or email', 'bilal.ahmad@gdczaim.edu.pk', 'teacher.html'],
+      admin: ['Administrator username', 'registrar', 'admin.html'],
+      library: ['Library staff ID', 'lib-004', 'admin.html']
+    };
+
+    document.querySelectorAll('[data-role]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('[data-role]').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+        btn.setAttribute('aria-pressed', 'true');
+        role = btn.getAttribute('data-role');
+        document.getElementById('login-id-label').textContent = labels[role][0];
+        document.getElementById('login-id').placeholder = labels[role][1];
+      });
+    });
+
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var status = document.getElementById('login-status');
+      var id = document.getElementById('login-id').value.trim();
+      var pw = document.getElementById('login-pw').value;
+      if (!id || !pw) {
+        status.hidden = false;
+        status.className = 'form-status err';
+        status.textContent = 'Enter both your identifier and password to continue.';
+        status.focus();
+        return;
+      }
+      status.hidden = false;
+      status.className = 'form-status ok';
+      status.textContent = 'Signed in. Opening the ' + role + ' dashboard…';
+      setTimeout(function () { location.href = labels[role][2]; }, 700);
+    });
+
+    document.getElementById('forgot').addEventListener('click', function (e) {
+      e.preventDefault();
+      var status = document.getElementById('login-status');
+      status.hidden = false;
+      status.className = 'form-status ok';
+      status.innerHTML = 'A password-reset link would be sent to the email address registered with the ' +
+        'college. For help, contact <a href="mailto:itsupport@gdczaim.edu.pk">itsupport@gdczaim.edu.pk</a>.';
+      status.focus();
+    });
+  })();
+</script>
+
+</body>
+</html>
