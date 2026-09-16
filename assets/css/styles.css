@@ -370,13 +370,38 @@ html[lang='ur'] .brand-sub { letter-spacing: normal; text-transform: none; }
    ================================================================ */
 .hero {
   position: relative; color: #fff; overflow: hidden;
-  background: linear-gradient(135deg, var(--green-950) 0%, var(--green-800) 45%, var(--green-700) 100%);
+  background-color: var(--green-950);
+  background-image: linear-gradient(135deg, var(--green-950) 0%, var(--green-800) 45%, var(--green-700) 100%);
+}
+/* Campus photograph behind the hero. The overlay below keeps the white text
+   above the 4.5:1 contrast ratio regardless of what the photo is doing.
+   NOTE: the url() lives here, not in an inline custom property — a url() inside
+   a custom property is resolved relative to this stylesheet's location, so an
+   inline `--hero-photo: url('assets/img/…')` would resolve to assets/css/assets/img/. */
+.hero--photo {
+  background-image:
+    linear-gradient(100deg, rgba(5,37,26,.93) 0%, rgba(8,50,36,.82) 42%, rgba(5,37,26,.62) 100%),
+    url('../img/campus-hero.jpg');
+  background-size: cover, cover;
+  background-position: center, center 32%;
+  background-repeat: no-repeat, no-repeat;
 }
 .hero::before {
   content: ''; position: absolute; inset: 0; opacity: .5;
   background-image:
     radial-gradient(circle at 82% 18%, rgba(200,162,74,.28), transparent 42%),
     radial-gradient(circle at 12% 88%, rgba(30,146,104,.35), transparent 48%);
+}
+.hero--photo::before { opacity: .28; }
+.hero--photo .hero-card { background: rgba(5,37,26,.46); border-color: rgba(255,255,255,.22); }
+.hero--photo::after { opacity: .04; }
+@media (max-width: 940px) {
+  /* On phones the overlay has to work harder — the text sits over the photo. */
+  .hero--photo {
+    background-image:
+      linear-gradient(180deg, rgba(5,37,26,.9) 0%, rgba(8,50,36,.84) 55%, rgba(5,37,26,.92) 100%),
+      url('../img/campus-hero.jpg');
+  }
 }
 .hero::after {
   content: ''; position: absolute; inset: 0; opacity: .07;
@@ -540,6 +565,13 @@ table.data tbody tr:hover { background: var(--surface-2); }
 }
 .gallery-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-3); }
 .gallery-item .ph { position: absolute; inset: 0; }
+.gallery-item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.gallery-item:hover img { transform: scale(1.03); }
+.gallery-item img { transition: transform .35s var(--ease); }
+.lightbox img { width: 100%; max-height: 78vh; object-fit: contain; border-radius: var(--radius-lg); }
+figure.photo { margin: 0; }
+figure.photo img { width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-2); }
+figure.photo figcaption { margin-top: .6rem; font-size: var(--step--1); color: var(--text-muted); }
 .gallery-item figcaption {
   position: absolute; inset-inline: 0; bottom: 0; padding: var(--sp-4) var(--sp-3) var(--sp-3);
   background: linear-gradient(transparent, rgba(5,37,26,.88)); color: #fff;

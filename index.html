@@ -128,7 +128,7 @@
     </div>
 
     <!-- ============ Hero ============ -->
-    <section class="hero">
+    <section class="hero hero--photo">
       <div class="container">
         <div class="hero-grid">
           <div>
@@ -319,6 +319,14 @@
       </div>
     </section>
 
+    <div class="lightbox" role="dialog" aria-modal="true" aria-label="Gallery image">
+      <button class="btn btn-on-dark btn-sm lightbox-close" type="button">Close</button>
+      <figure>
+        <span data-lb-media></span>
+        <figcaption data-lb-caption></figcaption>
+      </figure>
+    </div>
+
     <noscript>
       <div class="container" style="padding-block:2rem">
         <div class="callout callout--accent">
@@ -490,8 +498,14 @@
 
     /* Gallery preview */
     document.getElementById('home-gallery').innerHTML = D.galleryItems.slice(0, 4).map(function (g) {
-      return '<figure class="gallery-item reveal" data-lightbox data-tone="' + g.tone + '" data-caption="' + U.esc(g.title) + '" role="button" tabindex="0">' +
-        '<span class="ph ph-' + g.tone + '"></span><figcaption>' + U.esc(g.title) + '</figcaption></figure>';
+      return '<figure class="gallery-item reveal" data-lightbox data-tone="' + g.tone + '"' +
+        ' data-caption="' + U.esc(g.title) + '"' +
+        (g.full ? ' data-full="' + U.esc(g.full) + '" data-alt="' + U.esc(g.alt || g.title) + '"' : '') +
+        ' role="button" tabindex="0" aria-label="View ' + U.esc(g.title) + '">' +
+        (g.image
+          ? '<img src="' + U.esc(g.image) + '" alt="' + U.esc(g.alt || g.title) + '" loading="lazy" width="720" height="540">'
+          : '<span class="ph ph-' + g.tone + '"></span>') +
+        '<figcaption>' + U.esc(g.title) + '</figcaption></figure>';
     }).join('');
 
     /* Facilities */
@@ -500,6 +514,14 @@
         '<span style="color:var(--brand);display:inline-flex;width:20px;height:20px">' + U.icon(f.icon) + '</span>' +
         U.esc(f.name) + '</div>';
     }).join('');
+
+    document.getElementById('home-gallery').addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var item = e.target.closest('[data-lightbox]');
+      if (!item) return;
+      e.preventDefault();
+      item.click();
+    });
 
     /* Re-run reveal + counters for the freshly injected nodes */
     window.dispatchEvent(new Event('gdc:rendered'));

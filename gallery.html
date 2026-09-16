@@ -143,7 +143,7 @@
     <div class="lightbox" role="dialog" aria-modal="true" aria-label="Gallery image">
       <button class="btn btn-on-dark btn-sm lightbox-close" type="button">Close</button>
       <figure>
-        <span class="ph" data-lb-image></span>
+        <span data-lb-media></span>
         <figcaption data-lb-caption></figcaption>
       </figure>
     </div>
@@ -241,9 +241,13 @@
       grid.innerHTML = D.galleryItems
         .filter(function (g) { return cat === 'all' || g.category === cat; })
         .map(function (g) {
-          return '<figure class="gallery-item reveal" data-lightbox data-tone="' + g.tone + '" data-caption="' +
-            U.esc(g.title) + '" role="button" tabindex="0" aria-label="View ' + U.esc(g.title) + '">' +
-            '<span class="ph ph-' + g.tone + '"></span>' +
+          return '<figure class="gallery-item reveal" data-lightbox data-tone="' + g.tone + '"' +
+            ' data-caption="' + U.esc(g.title) + '"' +
+            (g.full ? ' data-full="' + U.esc(g.full) + '" data-alt="' + U.esc(g.alt || g.title) + '"' : '') +
+            ' role="button" tabindex="0" aria-label="View ' + U.esc(g.title) + '">' +
+            (g.image
+              ? '<img src="' + U.esc(g.image) + '" alt="' + U.esc(g.alt || g.title) + '" loading="lazy" width="720" height="540">'
+              : '<span class="ph ph-' + g.tone + '"></span>') +
             '<figcaption>' + U.esc(g.title) + '<br><span style="font-weight:400;opacity:.85">' + U.esc(g.category) + '</span></figcaption></figure>';
         }).join('');
       window.dispatchEvent(new Event('gdc:rendered'));

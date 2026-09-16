@@ -63,4 +63,5 @@ sample data, but needs the Phase 2 API to persist or compute anything · **Phase
 1. Lists are rendered client-side from `data.js`, so pages need JavaScript; a `<noscript>` message points
    to alternatives. Server-side rendering is a Phase 2 consideration for search-engine indexing.
 2. Urdu translation covers interface labels rather than full body text.
-3. Gallery images and document files are placeholders pending official assets.
+3. One real campus photograph is in use (hero, gallery, About and Contact pages); the remaining
+   gallery tiles and all document files are still placeholders pending official assets.

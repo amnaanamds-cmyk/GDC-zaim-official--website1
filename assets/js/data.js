@@ -388,7 +388,10 @@ const facilities = [
 ];
 
 const galleryItems = [
-  { id: 'g01', title: 'Main Academic Block', category: 'Campus', tone: 'a' },
+  { id: 'g01', title: 'Main Academic Block', category: 'Campus', tone: 'a',
+    image: 'assets/img/campus-main-block-thumb.jpg',
+    full: 'assets/img/campus-main-block.jpg',
+    alt: 'The main academic block of Government Degree College Zaim: a two-storey brick building with arched windows and a central tower, fronted by a wide lawn and flowering shrubs.' },
   { id: 'g02', title: 'Central Library Reading Hall', category: 'Campus', tone: 'b' },
   { id: 'g03', title: 'Computer Laboratory', category: 'Academic', tone: 'c' },
   { id: 'g04', title: 'Annual Science Exhibition', category: 'Events', tone: 'd' },

@@ -291,9 +291,12 @@
    * Lightbox (gallery)
    * ============================================================ */
   let lastFocus = null;
-  function openLightbox(box, tone, caption) {
+  function openLightbox(box, tone, caption, image, alt) {
     lastFocus = document.activeElement;
-    box.querySelector('[data-lb-image]').className = 'ph ph-' + tone;
+    const media = box.querySelector('[data-lb-media]');
+    media.innerHTML = image
+      ? '<img src="' + esc(image) + '" alt="' + esc(alt || caption) + '">'
+      : '<span class="ph ph-' + esc(tone) + '"></span>';
     box.querySelector('[data-lb-caption]').textContent = caption;
     box.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -391,7 +394,8 @@
     if (box) {
       document.addEventListener('click', e => {
         const item = e.target.closest('[data-lightbox]');
-        if (item) openLightbox(box, item.getAttribute('data-tone'), item.getAttribute('data-caption'));
+        if (item) openLightbox(box, item.getAttribute('data-tone'), item.getAttribute('data-caption'),
+          item.getAttribute('data-full'), item.getAttribute('data-alt'));
         if (e.target.closest('.lightbox-close') || e.target === box) closeLightbox(box);
       });
     }

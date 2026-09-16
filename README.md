@@ -45,6 +45,7 @@ portal/                       login.html, student.html, teacher.html, admin.html
 assets/css/styles.css         Design system: tokens, components, light/dark, LTR/RTL, print
 assets/js/data.js             ALL site content — the single source of truth
 assets/js/main.js             Navigation, theme, language, search index, shared helpers
+assets/img/                   Campus photography (hero crop, gallery thumbnail, full-size)
 docs/requirements-coverage.md Which SRS requirements this phase implements
 ```
 
@@ -93,8 +94,9 @@ AI chatbot, academic-risk analytics, semantic search) are described in the propo
 
 ## Content note
 
-College details — the principal's name, faculty, statistics, notices, contact numbers and photographs —
-are realistic placeholders. Replace them with official records in `assets/js/data.js` and the page copy
+The campus photograph in `assets/img/` is genuine and appears on the home hero, in the gallery, and on the
+About and Contact pages. Everything else — the principal's name, faculty, statistics, notices, contact
+numbers and the remaining gallery tiles — is a realistic placeholder. Replace them with official records in `assets/js/data.js` and the page copy
 before this site goes live. The privacy policy and accessibility statement should be reviewed and approved
 by the college administration.
 
