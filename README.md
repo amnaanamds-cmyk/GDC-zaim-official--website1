@@ -154,6 +154,58 @@ prisma/
 public/uploads/        Uploaded media (gitignored — runtime data)
 ```
 
+## Deploying it live
+
+The app runs on any host that supports Next.js. These steps are for Vercel, which is free for a
+project this size.
+
+**1. Create a hosted database.** Your laptop's PostgreSQL is not reachable from the internet.
+[Neon](https://neon.tech) and [Supabase](https://supabase.com) both have free tiers. Create a database and copy
+its **pooled** connection string — it looks like `postgresql://user:pass@host/db?sslmode=require`.
+
+**2. Push your code to GitHub** (already done if you have been committing).
+
+**3. Import the repository on Vercel.** New Project → pick the repo → before clicking Deploy, open
+**Environment Variables** and add:
+
+| Name | Value |
+|---|---|
+| `DATABASE_URL` | the pooled connection string from step 1 |
+
+**4. Add a Blob store for uploads.** In the project: Storage → Create → **Blob**. Vercel adds
+`BLOB_READ_WRITE_TOKEN` to the environment automatically. Without it the event photo and video uploads
+will appear to work and then vanish on the next deploy, because a hosting platform's filesystem is not
+permanent.
+
+**5. Deploy.** The build runs `prisma migrate deploy` first, so the tables are created on the hosted
+database automatically.
+
+**6. Load the college content, once.** From your laptop, pointing at the hosted database:
+
+```bash
+# macOS / Linux
+DATABASE_URL="<the pooled connection string>" npm run db:seed
+
+# Windows PowerShell
+$env:DATABASE_URL="<the pooled connection string>"; npm run db:seed
+```
+
+**7. Change the demo passwords.** They are published in this README. Sign in as `registrar` and change
+them, or edit `prisma/seed.ts` before step 6.
+
+After that, every `git push` redeploys automatically. Old deployments are kept, so you can roll back
+from the Vercel dashboard at any time.
+
+### Where uploads are stored
+
+| | Local development | Hosted |
+|---|---|---|
+| Backend | `public/uploads` on disk | Vercel Blob |
+| Chosen by | no `BLOB_READ_WRITE_TOKEN` | `BLOB_READ_WRITE_TOKEN` present |
+
+`lib/storage.ts` is the only file that knows the difference. To use S3 or Cloudinary instead, that is the
+one file to change.
+
 ## Security
 
 - Passwords hashed with bcrypt (12 rounds); never stored or logged in plain text

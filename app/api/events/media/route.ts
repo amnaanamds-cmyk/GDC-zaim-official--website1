@@ -1,15 +1,11 @@
 import { NextResponse } from 'next/server';
-import { mkdir, writeFile, unlink } from 'node:fs/promises';
-import path from 'node:path';
-import { randomUUID } from 'node:crypto';
 import { Role, MediaKind } from '@prisma/client';
 import { db } from '@/lib/db';
 import { getSessionUser, logActivity } from '@/lib/auth';
-import { MEDIA_POLICY, validateFile, safeFilename } from '@/lib/media';
+import { MEDIA_POLICY, validateFile } from '@/lib/media';
+import { saveUpload, deleteUpload } from '@/lib/storage';
 
 export const runtime = 'nodejs';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 
 /**
  * Receives event photographs and videos chosen from the administrator's local
@@ -42,8 +38,6 @@ export async function POST(request: Request) {
     if (!exists) return NextResponse.json({ error: 'That event no longer exists.' }, { status: 400 });
   }
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
-
   const saved: string[] = [];
   const written: string[] = [];
 
@@ -52,21 +46,23 @@ export async function POST(request: Request) {
       const check = validateFile({ type: file.type, size: file.size, name: file.name });
       if (!check.ok) return NextResponse.json({ error: check.error }, { status: 400 });
 
-      const id = randomUUID();
-      const filename = safeFilename(file.name, id);
       const buffer = Buffer.from(await file.arrayBuffer());
-      await writeFile(path.join(UPLOAD_DIR, filename), buffer);
-      written.push(filename);
+      const stored = await saveUpload(buffer, file.name, file.type, 'events');
+      written.push(stored.url);
 
       // The browser captures a still from each video and sends it alongside,
       // so a video tile has something to show without ffmpeg on the server.
       let posterPath: string | null = null;
       const poster = form.get(`poster-${i}`);
       if (check.kind === 'video' && poster instanceof File && poster.size > 0 && poster.size < 2 * 1024 * 1024) {
-        const posterName = `${id}-poster.jpg`;
-        await writeFile(path.join(UPLOAD_DIR, posterName), Buffer.from(await poster.arrayBuffer()));
-        written.push(posterName);
-        posterPath = `/uploads/${posterName}`;
+        const posterStored = await saveUpload(
+          Buffer.from(await poster.arrayBuffer()),
+          `${file.name}-poster.jpg`,
+          'image/jpeg',
+          'events',
+        );
+        written.push(posterStored.url);
+        posterPath = posterStored.url;
       }
 
       const durationRaw = Number(form.get(`duration-${i}`));
@@ -78,7 +74,7 @@ export async function POST(request: Request) {
           kind: check.kind === 'video' ? MediaKind.VIDEO : MediaKind.IMAGE,
           title: file.name.slice(0, 180),
           description: description.slice(0, 400),
-          filePath: `/uploads/${filename}`,
+          filePath: stored.url,
           posterPath,
           mime: file.type,
           size: file.size,
@@ -90,7 +86,7 @@ export async function POST(request: Request) {
     }
   } catch (err) {
     // Roll back any files already written so a failed upload leaves nothing behind.
-    await Promise.all(written.map((f) => unlink(path.join(UPLOAD_DIR, f)).catch(() => null)));
+    await Promise.all(written.map((url) => deleteUpload(url)));
     await db.eventMedia.deleteMany({ where: { id: { in: saved } } });
     console.error('Upload failed:', err);
     return NextResponse.json({ error: 'The upload could not be completed.' }, { status: 500 });
@@ -115,12 +111,7 @@ export async function DELETE(request: Request) {
   const item = await db.eventMedia.findUnique({ where: { id } });
   if (!item) return NextResponse.json({ error: 'Not found.' }, { status: 404 });
 
-  for (const p of [item.filePath, item.posterPath]) {
-    if (!p) continue;
-    // Only ever unlink inside the uploads directory.
-    const resolved = path.join(UPLOAD_DIR, path.basename(p));
-    await unlink(resolved).catch(() => null);
-  }
+  await Promise.all([item.filePath, item.posterPath].map((url) => deleteUpload(url)));
 
   await db.eventMedia.delete({ where: { id } });
   await logActivity(user.id, 'DELETE', 'EventMedia', id, item.title);

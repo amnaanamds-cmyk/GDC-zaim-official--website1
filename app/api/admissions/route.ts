@@ -1,13 +1,9 @@
 import { NextResponse } from 'next/server';
-import { mkdir, writeFile, unlink } from 'node:fs/promises';
-import path from 'node:path';
-import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { db } from '@/lib/db';
+import { saveUpload, deleteUpload } from '@/lib/storage';
 
 export const runtime = 'nodejs';
-
-const DOC_DIR = path.join(process.cwd(), 'public', 'uploads', 'applications');
 const ALLOWED_DOC_MIMES = ['application/pdf', 'image/jpeg', 'image/png'];
 const MAX_DOC_BYTES = 2 * 1024 * 1024;
 const MAX_DOCS = 6;
@@ -76,8 +72,6 @@ export async function POST(request: Request) {
   const written: string[] = [];
 
   try {
-    await mkdir(DOC_DIR, { recursive: true });
-
     const application = await db.application.create({
       data: {
         ref,
@@ -95,16 +89,18 @@ export async function POST(request: Request) {
     });
 
     for (const file of files) {
-      const id = randomUUID();
-      const ext = (file.name.match(/\.[a-zA-Z0-9]{1,5}$/)?.[0] ?? '').toLowerCase();
-      const filename = `${id}${ext}`;
-      await writeFile(path.join(DOC_DIR, filename), Buffer.from(await file.arrayBuffer()));
-      written.push(filename);
+      const stored = await saveUpload(
+        Buffer.from(await file.arrayBuffer()),
+        file.name,
+        file.type,
+        'applications',
+      );
+      written.push(stored.url);
 
       await db.applicationDocument.create({
         data: {
           applicationId: application.id,
-          filePath: `/uploads/applications/${filename}`,
+          filePath: stored.url,
           originalName: file.name.slice(0, 180),
           mime: file.type,
           size: file.size,
@@ -114,7 +110,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true, ref, documents: files.length });
   } catch (err) {
-    await Promise.all(written.map((f) => unlink(path.join(DOC_DIR, f)).catch(() => null)));
+    await Promise.all(written.map((url) => deleteUpload(url)));
     console.error('Application failed:', err);
     return NextResponse.json({ error: 'The application could not be submitted.' }, { status: 500 });
   }
