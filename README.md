@@ -17,49 +17,66 @@ uploading event photographs and videos from their computer makes them visible to
 | PostgreSQL | 14 or newer | Must be running before you start the app |
 | npm | 10 or newer | Ships with Node |
 
-## Setup
+## Setup — the easy way
 
-**1. Install dependencies**
+Install the two prerequisites once:
+
+- **Node.js 20+** — [nodejs.org](https://nodejs.org) (take the LTS installer)
+- **PostgreSQL 14+** — [postgresql.org/download](https://www.postgresql.org/download/). It asks you to choose a
+  password for the `postgres` account during installation — **write it down**, you need it once.
+
+Then:
+
+| Your computer | Do this |
+|---|---|
+| **Windows** | Double-click **`start.bat`** |
+| **macOS / Linux** | Double-click **`start.command`** (or run `./start.command` in a terminal) |
+
+That installs the dependencies, creates the database, loads the college content and starts the site.
+The first run asks once for the PostgreSQL password you chose at install time; after that it asks nothing.
+When it says `Setup complete`, open **http://localhost:3000**.
+
+To start it again later, double-click the same file.
+
+### Or from a terminal
 
 ```bash
 npm install
+npm run setup     # creates the database, tables and content — safe to re-run
+npm run dev       # http://localhost:3000
 ```
 
-**2. Create the database**
+`npm run setup` is idempotent: it skips whatever already exists and will not touch your data.
+Add `-- --reseed` to wipe it and reload the sample content.
+
+For a lab machine or CI where nothing should prompt, set `PGSUPERUSER` and `PGSUPERPASSWORD` first.
+
+### Or step by step
+
+If you prefer to do it by hand, or the script cannot reach your database:
+
+```sql
+-- in psql or pgAdmin, as the postgres superuser
+CREATE USER gdc WITH PASSWORD 'gdc_dev_password' CREATEDB;
+CREATE DATABASE gdc_zaim OWNER gdc;
+```
 
 ```bash
-# as the postgres superuser
-createuser gdc --pwprompt --createdb
-createdb gdc_zaim --owner=gdc
+cp .env.example .env          # Windows: copy .env.example .env
+# edit .env if you chose a different password
+npx prisma migrate deploy
+npm run db:seed
+npm run dev
 ```
 
-On Windows, use pgAdmin (or the SQL Shell) to create a login role `gdc` and a database `gdc_zaim`
-owned by it.
+### If something goes wrong
 
-**3. Point the app at it**
-
-```bash
-cp .env.example .env
-```
-
-Then edit `.env` and set your own password:
-
-```ini
-DATABASE_URL="postgresql://gdc:YOUR_PASSWORD@127.0.0.1:5432/gdc_zaim?schema=public"
-```
-
-**4. Create the tables and fill them with the college's content**
-
-```bash
-npx prisma migrate dev     # creates all 28 tables
-npm run db:seed            # departments, faculty, courses, students, notices, events, books…
-```
-
-**5. Run it**
-
-```bash
-npm run dev                # http://localhost:3000
-```
+| Message | Fix |
+|---|---|
+| `PostgreSQL is not answering` | The database server is not running. Windows: Services → postgresql → Start. macOS: `brew services start postgresql@16`. Linux: `sudo systemctl start postgresql`. |
+| `password authentication failed for user "postgres"` | Wrong superuser password. It is the one set during PostgreSQL installation, not your Windows password. |
+| `Node.js is not installed` | Install it from nodejs.org and reopen the terminal so `node` is on your PATH. |
+| Port 3000 already in use | Something else is on that port. Stop it, or run `npm run dev -- -p 3001`. |
 
 For a production build: `npm run build && npm start`.
 
@@ -113,6 +130,8 @@ administrator; everyone else sees a sign-in hint.
 ## Project structure
 
 ```
+start.bat / start.command   Double-click launchers (setup + run)
+scripts/setup.mjs           One-command setup: database, tables, content
 app/
   (public)/            Public website — home, about, departments, academics, faculty,
                        admissions, scholarships, notices, events, gallery, library,
