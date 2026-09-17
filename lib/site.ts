@@ -12,8 +12,8 @@ export const SITE = {
   admissionsEmail: 'admissions@gdczaim.edu.pk',
   officeHours: 'Monday – Friday, 08:00 – 14:00',
   principal: {
-    name: 'Prof. Dr. Muhammad Ayaz Khan',
+    name: 'Prof. Dr. Muhammad Ayub Khan',
     designation: 'Principal',
-    qualification: 'Ph.D. Education, M.Phil. English Literature',
+    qualification: 'Ph.D. Geography, M.Phil. Geography',
   },
 };

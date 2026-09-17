@@ -67,7 +67,7 @@ export default async function HomePage() {
               <p className="lead">
                 {t(
                   'home.hero.lead',
-                  'Knowledge, character and service since 1998. Nine academic departments, eleven degree programmes and a campus built around the students of this district.',
+                  'Knowledge, character and service since 1998. BS programmes in Computer Science and Zoology, intermediate studies in Science, Arts and Computer Science, and a campus built around the students of this district.',
                 )}
               </p>
               <div className="hero-actions">
@@ -258,8 +258,8 @@ export default async function HomePage() {
             <span className="eyebrow">Academics</span>
             <h2>{t('home.deptTitle', 'Our Departments')}</h2>
             <p>
-              Nine departments deliver four-year BS programmes and intermediate studies, supported by dedicated
-              laboratories, a central library and an active research and project culture.
+              Two departments deliver four-year BS programmes in Computer Science and Zoology, alongside FSc,
+              FA and ICS at intermediate level, supported by dedicated laboratories and a central library.
             </p>
           </div>
           <div className="grid grid-3">

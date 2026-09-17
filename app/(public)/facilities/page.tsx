@@ -13,13 +13,13 @@ export const dynamic = 'force-dynamic';
 const LABS = [
   ['Computer Laboratory I & II', 'IT Block, Ground Floor', '80 workstations', 'Programming, database and networking practicals'],
   ['Project & Research Lab', 'IT Block, First Floor', '40 workstations', 'Final-year projects and research work'],
-  ['Physics Laboratory', 'Science Block A', '45 students', 'Mechanics, electronics and optics practicals'],
-  ['Chemistry Laboratory', 'Science Block A', '45 students', 'Organic, inorganic and analytical practicals'],
-  ['Botany & Zoology Laboratory', 'Science Block B', '40 students', 'Microscopy, dissection and specimen study'],
-  ['Language Laboratory', 'Arts Block', '30 students', 'Listening, pronunciation and communication skills'],
+  ['Zoology Laboratory', 'Science Block', '40 students', 'Microscopy, dissection and specimen study'],
+  ['Zoology Museum', 'Science Block', 'Reference collection', 'Specimen reference for BS Zoology and FSc Biology'],
+  ['Chemistry Laboratory', 'Science Block', '45 students', 'Practical work for FSc Pre-Medical and Pre-Engineering'],
+  ['Physics Laboratory', 'Science Block', '45 students', 'Practical work for FSc Pre-Engineering'],
   ['Central Library', 'Library Building', '120 readers', 'Reading hall, reference section, digital catalogue'],
   ['Auditorium', 'Administration Block', '500 seats', 'Seminars, ceremonies and cultural events'],
-  ['Lecture Halls', 'Academic Blocks A – D', '32 rooms', 'Regular theory classes'],
+  ['Lecture Halls', 'Academic Blocks A – C', '24 rooms', 'Regular theory classes'],
 ];
 
 const ROUTES = [
@@ -44,7 +44,7 @@ export default async function FacilitiesPage() {
     <>
       <PageHero
         title="Campus Facilities"
-        lead="The college campus covers 24 acres and houses academic blocks, laboratories, a central library, hostel accommodation, sports grounds and student welfare facilities."
+        lead="The campus houses academic blocks, computer and science laboratories, a central library, sports grounds and student welfare facilities."
         crumbs={[{ label: 'About', href: '/about' }, { label: 'Facilities' }]}
       />
 

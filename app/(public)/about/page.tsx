@@ -13,10 +13,12 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 const ADMIN_TEAM: { role: string; name: string; detail: string; icon: IconName }[] = [
-  { role: 'Principal', name: 'Prof. Dr. Muhammad Ayaz Khan', detail: 'Overall academic and administrative head of the institution.', icon: 'user' },
-  { role: 'Vice Principal', name: 'Prof. Shahid Mehmood', detail: 'Academic coordination, discipline and timetabling.', icon: 'users' },
+  { role: 'Principal', name: 'Prof. Dr. Muhammad Ayub Khan', detail: 'Overall academic and administrative head of the institution. Ph.D. and M.Phil. in Geography.', icon: 'user' },
+  { role: 'Vice Principal', name: 'Prof. Arshad Iqbal', detail: 'Academic coordination, discipline and timetabling.', icon: 'users' },
   { role: 'Registrar / Admissions', name: 'Mr. Naeem Akhtar', detail: 'Admissions, enrolment, student records and certificates.', icon: 'clipboard' },
   { role: 'Controller of Examinations', name: 'Dr. Salman Yousaf', detail: 'Examination conduct, marks verification and result publication.', icon: 'chart' },
+  { role: 'Head, Computer Science', name: 'Prof. Shah Nawaz', detail: 'BS Computer Science and ICS: curriculum, laboratories and final-year projects.', icon: 'cpu' },
+  { role: 'Head, Zoology', name: 'Prof. Masoom Shah', detail: 'BS Zoology and FSc Biology: curriculum, laboratory and museum.', icon: 'dna' },
   { role: 'Librarian', name: 'Mr. Naveed Anjum', detail: 'Library services, catalogue and digital resources.', icon: 'book' },
   { role: 'Hostel Warden', name: 'Mr. Ejaz Ahmad', detail: 'Hostel allocation, residence discipline and welfare.', icon: 'home' },
 ];
@@ -60,10 +62,10 @@ export default async function AboutPage() {
               </p>
               <p>
                 The college was upgraded to degree-awarding status in 2004 and introduced four-year BS programmes
-                in 2012 following the national shift to the semester system. Today it enrols more than 4,200
-                students across nine departments, with laboratories, a central library, hostel accommodation and
-                transport facilities developed steadily through provincial development schemes and community
-                support.
+                in 2012 following the national shift to the semester system. Today it enrols around 680 students
+                across two degree-awarding departments — Computer Science and Zoology — and intermediate faculties
+                of Science, Arts and Computer Science, with laboratories, a central library and transport
+                facilities developed steadily through provincial development schemes and community support.
               </p>
               <p>
                 The college remains a fully government institution: fee structures are set by the Higher

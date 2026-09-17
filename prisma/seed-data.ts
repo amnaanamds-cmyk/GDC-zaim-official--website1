@@ -11,7 +11,7 @@
 
 const siteConfig = {
   name: 'Government Degree College Zaim',
-  nameUr: 'گورنمنٹ ڈگری کالج زعیم',
+  nameUr: 'گورنمنٹ ڈگری کالج زیم',
   shortName: 'GDC Zaim',
   tagline: 'Knowledge · Character · Service',
   taglineUr: 'علم · کردار · خدمت',
@@ -30,18 +30,18 @@ const siteConfig = {
     { label: 'LinkedIn', url: '#', icon: 'linkedin' }
   ],
   principal: {
-    name: 'Prof. Dr. Muhammad Ayaz Khan',
+    name: 'Prof. Dr. Muhammad Ayub Khan',
     designation: 'Principal',
-    qualification: 'Ph.D. Education, M.Phil. English Literature',
+    qualification: 'Ph.D. Geography, M.Phil. Geography',
     message:
       'Government Degree College Zaim has served this region for more than two decades, opening the doors of higher education to students who might otherwise have been left behind. Our purpose is simple: to combine academic rigour with character, so that every graduate leaves here able to think independently and serve honourably. This portal is part of that commitment — it puts admissions, attendance, results, library services and official notices in one transparent place, accessible to students, parents and faculty alike. I welcome you to our campus and invite you to make full use of what it offers.',
     messageShort:
       'Our purpose is to combine academic rigour with character, so that every graduate leaves here able to think independently and serve honourably.'
   },
   stats: [
-    { value: 4200, suffix: '+', label: 'Enrolled Students', labelUr: 'زیرِ تعلیم طلبہ' },
-    { value: 148, suffix: '', label: 'Faculty Members', labelUr: 'اساتذہ' },
-    { value: 9, suffix: '', label: 'Academic Departments', labelUr: 'شعبہ جات' },
+    { value: 680, suffix: '+', label: 'Enrolled Students', labelUr: 'زیرِ تعلیم طلبہ' },
+    { value: 18, suffix: '', label: 'Faculty Members', labelUr: 'اساتذہ' },
+    { value: 2, suffix: '', label: 'Academic Departments', labelUr: 'شعبہ جات' },
     { value: 27, suffix: '', label: 'Years of Service', labelUr: 'سالہ خدمات' }
   ]
 };
@@ -55,169 +55,49 @@ const departments = [
     name: 'Computer Science',
     nameUr: 'کمپیوٹر سائنس',
     icon: 'cpu',
-    hod: 'Dr. Sadia Rehman',
-    hodDesignation: 'Associate Professor & Head of Department',
+    hod: 'Prof. Shah Nawaz',
+    hodDesignation: 'Professor & Head of Department',
     established: 2006,
-    students: 610,
-    faculty: 14,
+    students: 420,
+    faculty: 9,
     intro:
-      'The Department of Computer Science offers a four-year BS programme built around programming fundamentals, data structures, databases, networks and software engineering, supported by three dedicated computer laboratories and an active final-year project culture.',
+      'The Department of Computer Science offers a four-year BS programme built around programming fundamentals, data structures, databases, networks and software engineering, together with ICS at intermediate level. Teaching is supported by dedicated computer laboratories and an active final-year project culture.',
     programs: ['BS Computer Science (4 Years)', 'ICS — Intermediate in Computer Science (2 Years)'],
     courses: [
       'Programming Fundamentals', 'Object Oriented Programming', 'Data Structures & Algorithms',
       'Database Systems', 'Operating Systems', 'Computer Networks', 'Software Engineering',
       'Web Technologies', 'Artificial Intelligence', 'Information Security'
     ],
-    facilities: ['3 Computer Labs (120 workstations)', 'Project & Research Lab', 'High-speed campus Wi-Fi'],
+    facilities: ['Computer Laboratories', 'Project & Research Lab', 'Campus Wi-Fi'],
     achievements: [
       'Runner-up, Inter-Collegiate Programming Contest 2025',
-      'Departmental FYP repository with 180+ archived projects'
+      'Departmental final-year project archive for reference by juniors'
     ],
     email: 'cs@gdczaim.edu.pk'
-  },
-  {
-    id: 'english',
-    name: 'English',
-    nameUr: 'انگریزی',
-    icon: 'book',
-    hod: 'Prof. Nadia Bashir',
-    hodDesignation: 'Professor & Head of Department',
-    established: 1998,
-    students: 480,
-    faculty: 16,
-    intro:
-      'The Department of English develops language proficiency, critical reading and literary scholarship, from compulsory English for all intermediate students to a specialised BS programme in English Literature and Linguistics.',
-    programs: ['BS English (4 Years)', 'Compulsory English — All Programmes'],
-    courses: ['Introduction to Literature', 'Classical Poetry', 'Drama', 'Novel', 'Linguistics', 'Academic Writing', 'Literary Criticism'],
-    facilities: ['Language Laboratory', 'Departmental Reading Room', 'Debating & Literary Society'],
-    achievements: ['Winner, Provincial Declamation Contest 2024', 'Annual literary magazine "Aaghaz"'],
-    email: 'english@gdczaim.edu.pk'
-  },
-  {
-    id: 'mathematics',
-    name: 'Mathematics',
-    nameUr: 'ریاضی',
-    icon: 'sigma',
-    hod: 'Dr. Imran Ullah',
-    hodDesignation: 'Assistant Professor & Head of Department',
-    established: 1999,
-    students: 395,
-    faculty: 12,
-    intro:
-      'Mathematics underpins the college’s science and computing programmes, offering rigorous training in calculus, algebra, analysis and numerical methods alongside an applied-mathematics research group.',
-    programs: ['BS Mathematics (4 Years)', 'Mathematics for FSc Pre-Engineering'],
-    courses: ['Calculus I–III', 'Linear Algebra', 'Real Analysis', 'Complex Analysis', 'Numerical Methods', 'Probability & Statistics'],
-    facilities: ['Mathematics Resource Centre', 'Computational Mathematics Lab access'],
-    achievements: ['Two faculty publications in HEC-recognised journals (2025)'],
-    email: 'maths@gdczaim.edu.pk'
-  },
-  {
-    id: 'physics',
-    name: 'Physics',
-    nameUr: 'طبیعیات',
-    icon: 'atom',
-    hod: 'Dr. Tariq Mehmood',
-    hodDesignation: 'Associate Professor & Head of Department',
-    established: 1998,
-    students: 340,
-    faculty: 13,
-    intro:
-      'The Department of Physics combines a well-equipped experimental laboratory with a theory curriculum spanning mechanics, electromagnetism, modern physics and electronics.',
-    programs: ['BS Physics (4 Years)', 'Physics for FSc Pre-Engineering & Pre-Medical'],
-    courses: ['Mechanics', 'Waves & Oscillations', 'Electricity & Magnetism', 'Modern Physics', 'Electronics', 'Quantum Mechanics'],
-    facilities: ['Advanced Physics Laboratory', 'Electronics Workshop'],
-    achievements: ['Best Science Exhibition Project, District Science Fair 2025'],
-    email: 'physics@gdczaim.edu.pk'
-  },
-  {
-    id: 'chemistry',
-    name: 'Chemistry',
-    nameUr: 'کیمیا',
-    icon: 'flask',
-    hod: 'Dr. Ayesha Noor',
-    hodDesignation: 'Assistant Professor & Head of Department',
-    established: 2000,
-    students: 365,
-    faculty: 12,
-    intro:
-      'The Department of Chemistry provides practical training in organic, inorganic, physical and analytical chemistry within laboratories maintained to departmental safety standards.',
-    programs: ['BS Chemistry (4 Years)', 'Chemistry for FSc Pre-Medical'],
-    courses: ['Organic Chemistry', 'Inorganic Chemistry', 'Physical Chemistry', 'Analytical Chemistry', 'Biochemistry', 'Industrial Chemistry'],
-    facilities: ['Organic & Inorganic Labs', 'Instrumentation Room', 'Chemical Store with safety protocol'],
-    achievements: ['Collaborative water-quality survey with the district administration'],
-    email: 'chemistry@gdczaim.edu.pk'
-  },
-  {
-    id: 'botany',
-    name: 'Botany',
-    nameUr: 'نباتیات',
-    icon: 'leaf',
-    hod: 'Dr. Hina Gul',
-    hodDesignation: 'Assistant Professor & Head of Department',
-    established: 2002,
-    students: 290,
-    faculty: 10,
-    intro:
-      'The Department of Botany studies plant sciences from cell biology to ecology, supported by a herbarium and a campus botanical garden used for field practicals.',
-    programs: ['BS Botany (4 Years)', 'Biology for FSc Pre-Medical'],
-    courses: ['Plant Systematics', 'Plant Physiology', 'Genetics', 'Ecology', 'Cell Biology', 'Microbiology'],
-    facilities: ['Herbarium (2,400 specimens)', 'Botanical Garden', 'Microscopy Lab'],
-    achievements: ['Campus biodiversity survey published in the college research bulletin'],
-    email: 'botany@gdczaim.edu.pk'
   },
   {
     id: 'zoology',
     name: 'Zoology',
     nameUr: 'حیوانیات',
     icon: 'dna',
-    hod: 'Dr. Farhan Ali',
-    hodDesignation: 'Associate Professor & Head of Department',
+    hod: 'Prof. Masoom Shah',
+    hodDesignation: 'Professor & Head of Department',
     established: 2002,
-    students: 275,
-    faculty: 10,
+    students: 260,
+    faculty: 7,
     intro:
-      'The Department of Zoology covers animal diversity, physiology, genetics and wildlife studies, with a museum collection used across practical courses.',
+      'The Department of Zoology covers animal diversity, physiology, genetics, wildlife and entomology through a four-year BS programme, and teaches Biology to FSc Pre-Medical students. The department maintains a museum collection and a dedicated zoology laboratory used across practical courses.',
     programs: ['BS Zoology (4 Years)', 'Biology for FSc Pre-Medical'],
-    courses: ['Animal Diversity', 'Cell & Molecular Biology', 'Physiology', 'Genetics', 'Wildlife & Fisheries', 'Entomology'],
-    facilities: ['Zoology Museum', 'Dissection & Physiology Lab'],
-    achievements: ['Wildlife awareness campaign with the provincial Wildlife Department'],
+    courses: [
+      'Animal Diversity', 'Cell & Molecular Biology', 'Physiology', 'Genetics',
+      'Wildlife & Fisheries', 'Entomology', 'Developmental Biology', 'Ecology'
+    ],
+    facilities: ['Zoology Laboratory', 'Zoology Museum', 'Dissection & Physiology Room'],
+    achievements: [
+      'Wildlife awareness campaign with the provincial Wildlife Department',
+      'Campus biodiversity survey conducted by final-year students'
+    ],
     email: 'zoology@gdczaim.edu.pk'
-  },
-  {
-    id: 'economics',
-    name: 'Economics & Commerce',
-    nameUr: 'معاشیات و کامرس',
-    icon: 'chart',
-    hod: 'Prof. Zahid Iqbal',
-    hodDesignation: 'Professor & Head of Department',
-    established: 2004,
-    students: 410,
-    faculty: 11,
-    intro:
-      'The Department of Economics & Commerce prepares students for careers in public administration, banking and business through applied coursework in economics, accounting and statistics.',
-    programs: ['BS Economics (4 Years)', 'I.Com — Intermediate in Commerce (2 Years)'],
-    courses: ['Microeconomics', 'Macroeconomics', 'Development Economics', 'Financial Accounting', 'Business Statistics', 'Public Finance'],
-    facilities: ['Commerce Computer Lab', 'Economics Data Resource Centre'],
-    achievements: ['Annual district economic survey compiled by final-year students'],
-    email: 'economics@gdczaim.edu.pk'
-  },
-  {
-    id: 'islamiyat',
-    name: 'Islamic Studies & Urdu',
-    nameUr: 'اسلامیات و اردو',
-    icon: 'mosque',
-    hod: 'Prof. Abdul Wahab',
-    hodDesignation: 'Professor & Head of Department',
-    established: 1998,
-    students: 520,
-    faculty: 12,
-    intro:
-      'The Department of Islamic Studies & Urdu delivers the compulsory curriculum for all programmes and specialised study in Quranic sciences, Islamic history and Urdu literature.',
-    programs: ['BS Islamic Studies (4 Years)', 'BS Urdu (4 Years)', 'Compulsory Islamiyat & Urdu'],
-    courses: ['Quranic Studies', 'Hadith & Fiqh', 'Islamic History', 'Urdu Adab', 'Urdu Grammar & Composition', 'Iqbaliyat'],
-    facilities: ['Islamic Reference Library', 'Naat & Qirat Society'],
-    achievements: ['First position, Inter-Collegiate Naat Competition 2025'],
-    email: 'islamiyat@gdczaim.edu.pk'
   }
 ];
 
@@ -225,26 +105,27 @@ const departments = [
  * Faculty directory
  * ------------------------------------------------------------------ */
 const faculty = [
-  { id: 'f01', name: 'Prof. Dr. Muhammad Ayaz Khan', designation: 'Principal', dept: 'administration', qualification: 'Ph.D. Education', specialization: 'Educational Leadership', email: 'principal@gdczaim.edu.pk' },
-  { id: 'f02', name: 'Prof. Nadia Bashir', designation: 'Professor / HOD', dept: 'english', qualification: 'M.Phil. English', specialization: 'Modern Drama', email: 'nadia.bashir@gdczaim.edu.pk' },
-  { id: 'f03', name: 'Dr. Sadia Rehman', designation: 'Associate Professor / HOD', dept: 'computer-science', qualification: 'Ph.D. Computer Science', specialization: 'Database Systems', email: 'sadia.rehman@gdczaim.edu.pk' },
+  { id: 'f01', name: 'Prof. Dr. Muhammad Ayub Khan', designation: 'Principal', dept: 'administration', qualification: 'Ph.D. Geography, M.Phil. Geography', specialization: 'Geography & Educational Administration', email: 'principal@gdczaim.edu.pk' },
+  { id: 'f02', name: 'Prof. Arshad Iqbal', designation: 'Vice Principal', dept: 'administration', qualification: 'M.Phil.', specialization: 'Academic Coordination & Discipline', email: 'viceprincipal@gdczaim.edu.pk' },
+
+  { id: 'f03', name: 'Prof. Shah Nawaz', designation: 'Professor / HOD', dept: 'computer-science', qualification: 'M.Phil. Computer Science', specialization: 'Database Systems', email: 'shah.nawaz@gdczaim.edu.pk' },
   { id: 'f04', name: 'Mr. Bilal Ahmad', designation: 'Assistant Professor', dept: 'computer-science', qualification: 'MS Software Engineering', specialization: 'Web & Mobile Engineering', email: 'bilal.ahmad@gdczaim.edu.pk' },
   { id: 'f05', name: 'Ms. Kiran Shah', designation: 'Lecturer', dept: 'computer-science', qualification: 'MS Computer Science', specialization: 'Artificial Intelligence', email: 'kiran.shah@gdczaim.edu.pk' },
   { id: 'f06', name: 'Mr. Usman Ghani', designation: 'Lecturer', dept: 'computer-science', qualification: 'MSCS', specialization: 'Computer Networks', email: 'usman.ghani@gdczaim.edu.pk' },
-  { id: 'f07', name: 'Dr. Imran Ullah', designation: 'Assistant Professor / HOD', dept: 'mathematics', qualification: 'Ph.D. Mathematics', specialization: 'Numerical Analysis', email: 'imran.ullah@gdczaim.edu.pk' },
-  { id: 'f08', name: 'Ms. Sana Javed', designation: 'Lecturer', dept: 'mathematics', qualification: 'M.Phil. Mathematics', specialization: 'Applied Algebra', email: 'sana.javed@gdczaim.edu.pk' },
-  { id: 'f09', name: 'Dr. Tariq Mehmood', designation: 'Associate Professor / HOD', dept: 'physics', qualification: 'Ph.D. Physics', specialization: 'Solid State Physics', email: 'tariq.mehmood@gdczaim.edu.pk' },
-  { id: 'f10', name: 'Mr. Hamza Saeed', designation: 'Lecturer', dept: 'physics', qualification: 'M.Phil. Physics', specialization: 'Electronics', email: 'hamza.saeed@gdczaim.edu.pk' },
-  { id: 'f11', name: 'Dr. Ayesha Noor', designation: 'Assistant Professor / HOD', dept: 'chemistry', qualification: 'Ph.D. Chemistry', specialization: 'Analytical Chemistry', email: 'ayesha.noor@gdczaim.edu.pk' },
-  { id: 'f12', name: 'Mr. Adnan Malik', designation: 'Lecturer', dept: 'chemistry', qualification: 'M.Phil. Chemistry', specialization: 'Organic Synthesis', email: 'adnan.malik@gdczaim.edu.pk' },
-  { id: 'f13', name: 'Dr. Hina Gul', designation: 'Assistant Professor / HOD', dept: 'botany', qualification: 'Ph.D. Botany', specialization: 'Plant Ecology', email: 'hina.gul@gdczaim.edu.pk' },
-  { id: 'f14', name: 'Dr. Farhan Ali', designation: 'Associate Professor / HOD', dept: 'zoology', qualification: 'Ph.D. Zoology', specialization: 'Entomology', email: 'farhan.ali@gdczaim.edu.pk' },
-  { id: 'f15', name: 'Prof. Zahid Iqbal', designation: 'Professor / HOD', dept: 'economics', qualification: 'M.Phil. Economics', specialization: 'Development Economics', email: 'zahid.iqbal@gdczaim.edu.pk' },
-  { id: 'f16', name: 'Ms. Rabia Anwar', designation: 'Lecturer', dept: 'economics', qualification: 'MS Commerce', specialization: 'Financial Accounting', email: 'rabia.anwar@gdczaim.edu.pk' },
-  { id: 'f17', name: 'Prof. Abdul Wahab', designation: 'Professor / HOD', dept: 'islamiyat', qualification: 'M.Phil. Islamic Studies', specialization: 'Quranic Sciences', email: 'abdul.wahab@gdczaim.edu.pk' },
-  { id: 'f18', name: 'Mr. Shafiq ur Rehman', designation: 'Lecturer', dept: 'islamiyat', qualification: 'M.A. Urdu', specialization: 'Urdu Literature', email: 'shafiq.rehman@gdczaim.edu.pk' },
-  { id: 'f19', name: 'Ms. Maryam Zeb', designation: 'Lecturer', dept: 'english', qualification: 'M.Phil. Linguistics', specialization: 'Applied Linguistics', email: 'maryam.zeb@gdczaim.edu.pk' },
-  { id: 'f20', name: 'Mr. Naveed Anjum', designation: 'Librarian', dept: 'administration', qualification: 'MLIS', specialization: 'Library & Information Science', email: 'library@gdczaim.edu.pk' }
+  { id: 'f07', name: 'Mr. Adnan Malik', designation: 'Lecturer', dept: 'computer-science', qualification: 'MSCS', specialization: 'Programming & Data Structures', email: 'adnan.malik@gdczaim.edu.pk' },
+
+  { id: 'f08', name: 'Prof. Masoom Shah', designation: 'Professor / HOD', dept: 'zoology', qualification: 'M.Phil. Zoology', specialization: 'Entomology', email: 'masoom.shah@gdczaim.edu.pk' },
+  { id: 'f09', name: 'Dr. Farhan Ali', designation: 'Associate Professor', dept: 'zoology', qualification: 'Ph.D. Zoology', specialization: 'Wildlife & Fisheries', email: 'farhan.ali@gdczaim.edu.pk' },
+  { id: 'f10', name: 'Ms. Hina Gul', designation: 'Lecturer', dept: 'zoology', qualification: 'M.Phil. Zoology', specialization: 'Physiology', email: 'hina.gul@gdczaim.edu.pk' },
+  { id: 'f11', name: 'Mr. Hamza Saeed', designation: 'Lecturer', dept: 'zoology', qualification: 'M.Sc. Zoology', specialization: 'Animal Diversity', email: 'hamza.saeed@gdczaim.edu.pk' },
+
+  { id: 'f12', name: 'Prof. Nadia Bashir', designation: 'Professor', dept: 'administration', qualification: 'M.Phil. English', specialization: 'Compulsory English (FSc / FA / ICS)', email: 'nadia.bashir@gdczaim.edu.pk' },
+  { id: 'f13', name: 'Mr. Shafiq ur Rehman', designation: 'Lecturer', dept: 'administration', qualification: 'M.A. Urdu', specialization: 'Urdu & Islamiyat (Intermediate)', email: 'shafiq.rehman@gdczaim.edu.pk' },
+  { id: 'f14', name: 'Dr. Ayesha Noor', designation: 'Assistant Professor', dept: 'administration', qualification: 'Ph.D. Chemistry', specialization: 'Chemistry (FSc Pre-Medical & Pre-Engineering)', email: 'ayesha.noor@gdczaim.edu.pk' },
+  { id: 'f15', name: 'Dr. Tariq Mehmood', designation: 'Associate Professor', dept: 'administration', qualification: 'Ph.D. Physics', specialization: 'Physics (FSc Pre-Engineering)', email: 'tariq.mehmood@gdczaim.edu.pk' },
+  { id: 'f16', name: 'Dr. Imran Ullah', designation: 'Assistant Professor', dept: 'administration', qualification: 'M.Phil. Mathematics', specialization: 'Mathematics (FSc / ICS)', email: 'imran.ullah@gdczaim.edu.pk' },
+  { id: 'f17', name: 'Prof. Zahid Iqbal', designation: 'Professor', dept: 'administration', qualification: 'M.Phil. Economics', specialization: 'Economics & Civics (FA)', email: 'zahid.iqbal@gdczaim.edu.pk' },
+  { id: 'f18', name: 'Mr. Naveed Anjum', designation: 'Librarian', dept: 'administration', qualification: 'MLIS', specialization: 'Library & Information Science', email: 'library@gdczaim.edu.pk' }
 ];
 
 /* ------------------------------------------------------------------ *
@@ -260,7 +141,7 @@ const notices = [
   { id: 'n-2026-037', title: 'Computer Science — Final Year Project Proposal Defence', titleUr: 'کمپیوٹر سائنس — فائنل ایئر پروجیکٹ دفاع', category: 'Academic', date: '2026-09-03', dept: 'computer-science', pinned: false, urgent: false, file: 'fyp-defence-schedule.pdf', body: 'Final-year students of BS Computer Science will present their project proposals before the departmental evaluation committee on 24 and 25 September 2026 in the Project Lab. Each group is allotted 15 minutes for presentation and 10 minutes for questions.' },
   { id: 'n-2026-036', title: 'Library Timings Extended During Examination Period', titleUr: 'امتحانات کے دوران لائبریری کے اوقات میں توسیع', category: 'General', date: '2026-08-30', dept: 'all', pinned: false, urgent: false, file: '', body: 'The central library will remain open until 18:00 from 1 October to 20 October 2026 to facilitate students during the examination period. Borrowing counters will close 30 minutes before closing time.' },
   { id: 'n-2026-035', title: 'Fee Submission Deadline — Fall Semester 2026', titleUr: 'فیس جمع کرانے کی آخری تاریخ — خزاں 2026', category: 'General', date: '2026-08-27', dept: 'all', pinned: false, urgent: false, file: 'fee-challan-fall-2026.pdf', body: 'All continuing students must deposit the semester fee at the designated bank branch using the challan available in Downloads by 15 September 2026. A late fee of PKR 500 will apply after the deadline.' },
-  { id: 'n-2026-034', title: 'Seminar on Career Opportunities in Public Service', titleUr: 'سرکاری ملازمتوں میں مواقع پر سیمینار', category: 'Academic', date: '2026-08-22', dept: 'economics', pinned: false, urgent: false, file: '', body: 'The Career Counselling Cell is organising a seminar on competitive examinations and public-service careers on 12 September 2026 at 11:00 in the college auditorium. Alumni serving in the provincial civil service will address the students.' },
+  { id: 'n-2026-034', title: 'Seminar on Career Opportunities in Public Service', titleUr: 'سرکاری ملازمتوں میں مواقع پر سیمینار', category: 'Academic', date: '2026-08-22', dept: 'zoology', pinned: false, urgent: false, file: '', body: 'The Career Counselling Cell is organising a seminar on competitive examinations and public-service careers on 12 September 2026 at 11:00 in the college auditorium. Alumni serving in the provincial civil service will address the students.' },
   { id: 'n-2026-033', title: 'Closure of College on Account of Public Holiday', titleUr: 'عام تعطیل کے باعث کالج بند', category: 'Holiday', date: '2026-08-12', dept: 'all', pinned: false, urgent: false, file: '', body: 'The college will remain closed on 14 August 2026 in observance of Independence Day. The flag-hoisting ceremony will be held at 08:30 on 13 August 2026 and attendance of all staff and student representatives is required.' },
   { id: 'n-2026-032', title: 'Revised Class Timetable Effective From September', titleUr: 'نظرثانی شدہ ٹائم ٹیبل', category: 'Academic', date: '2026-08-08', dept: 'all', pinned: false, urgent: false, file: 'class-timetable-fall-2026.pdf', body: 'A revised class timetable for the Fall 2026 semester takes effect from 1 September 2026. Students and faculty should download the updated version; room allocations for laboratory sessions have changed for several departments.' }
 ];
@@ -282,16 +163,11 @@ const events = [
  * ------------------------------------------------------------------ */
 const programmes = [
   { id: 'bscs', name: 'BS Computer Science', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 120, dept: 'computer-science', eligibility: 'FSc Pre-Engineering / ICS / FA with Mathematics, minimum 45% marks', fee: 'PKR 9,500 per semester' },
-  { id: 'bsen', name: 'BS English', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 100, dept: 'english', eligibility: 'Intermediate in any discipline, minimum 45% marks', fee: 'PKR 7,500 per semester' },
-  { id: 'bsma', name: 'BS Mathematics', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 80, dept: 'mathematics', eligibility: 'FSc Pre-Engineering / ICS, minimum 45% marks', fee: 'PKR 7,500 per semester' },
-  { id: 'bsph', name: 'BS Physics', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 80, dept: 'physics', eligibility: 'FSc Pre-Engineering / Pre-Medical, minimum 45% marks', fee: 'PKR 8,000 per semester' },
-  { id: 'bsch', name: 'BS Chemistry', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 80, dept: 'chemistry', eligibility: 'FSc Pre-Medical / Pre-Engineering, minimum 45% marks', fee: 'PKR 8,000 per semester' },
-  { id: 'bsbo', name: 'BS Botany', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 60, dept: 'botany', eligibility: 'FSc Pre-Medical, minimum 45% marks', fee: 'PKR 8,000 per semester' },
-  { id: 'bszo', name: 'BS Zoology', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 60, dept: 'zoology', eligibility: 'FSc Pre-Medical, minimum 45% marks', fee: 'PKR 8,000 per semester' },
-  { id: 'bsec', name: 'BS Economics', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 90, dept: 'economics', eligibility: 'Intermediate in any discipline, minimum 45% marks', fee: 'PKR 7,500 per semester' },
-  { id: 'bsis', name: 'BS Islamic Studies', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 60, dept: 'islamiyat', eligibility: 'Intermediate in any discipline, minimum 45% marks', fee: 'PKR 6,500 per semester' },
+  { id: 'bszo', name: 'BS Zoology', level: 'Undergraduate', duration: '4 Years (8 Semesters)', seats: 80, dept: 'zoology', eligibility: 'FSc Pre-Medical, minimum 45% marks', fee: 'PKR 8,000 per semester' },
+  { id: 'fsc-pre-med', name: 'FSc Pre-Medical', level: 'Intermediate', duration: '2 Years', seats: 150, dept: 'zoology', eligibility: 'Matriculation (Science), minimum 50% marks', fee: 'PKR 4,500 per semester' },
+  { id: 'fsc-pre-eng', name: 'FSc Pre-Engineering', level: 'Intermediate', duration: '2 Years', seats: 120, dept: 'computer-science', eligibility: 'Matriculation (Science), minimum 50% marks', fee: 'PKR 4,500 per semester' },
   { id: 'ics', name: 'ICS — Intermediate in Computer Science', level: 'Intermediate', duration: '2 Years', seats: 150, dept: 'computer-science', eligibility: 'Matriculation (Science), minimum 50% marks', fee: 'PKR 4,500 per semester' },
-  { id: 'icom', name: 'I.Com — Intermediate in Commerce', level: 'Intermediate', duration: '2 Years', seats: 100, dept: 'economics', eligibility: 'Matriculation in any group, minimum 45% marks', fee: 'PKR 4,000 per semester' }
+  { id: 'fa', name: 'FA — Intermediate in Arts', level: 'Intermediate', duration: '2 Years', seats: 150, dept: 'zoology', eligibility: 'Matriculation in any group, minimum 45% marks', fee: 'PKR 4,000 per semester' }
 ];
 
 const admissionSchedule = [
@@ -374,34 +250,28 @@ const studentServices = [
 const serviceStages = ['Submitted', 'Under Review', 'Approved', 'Ready', 'Delivered'];
 
 const facilities = [
-  { name: 'Central Library', icon: 'book', detail: '28,000+ volumes, reading hall for 120 readers, digital catalogue and e-resource terminals.' },
-  { name: 'Computer Laboratories', icon: 'cpu', detail: 'Three labs with 120 workstations, campus-wide Wi-Fi and a dedicated final-year project room.' },
-  { name: 'Science Laboratories', icon: 'flask', detail: 'Separate Physics, Chemistry, Botany and Zoology laboratories maintained to departmental safety standards.' },
+  { name: 'Central Library', icon: 'book', detail: 'Reference and lending collection for BS and intermediate students, with a reading hall and a digital catalogue.' },
+  { name: 'Computer Laboratory', icon: 'cpu', detail: 'Workstations for programming, database and networking practicals, a project room for final-year work, and campus Wi-Fi.' },
+  { name: 'Chemistry Laboratory', icon: 'flask', detail: 'Practical work for FSc Pre-Medical and Pre-Engineering students, maintained to departmental safety standards.' },
+  { name: 'Zoology Laboratory', icon: 'dna', detail: 'Microscopy, dissection and specimen study for BS Zoology and FSc Pre-Medical students, with a museum collection.' },
   { name: 'Sports Ground', icon: 'trophy', detail: 'Cricket and football ground, volleyball and badminton courts, and an indoor table-tennis room.' },
-  { name: 'Auditorium', icon: 'mic', detail: '500-seat auditorium with audio-visual facilities for seminars, ceremonies and cultural events.' },
+  { name: 'Auditorium', icon: 'mic', detail: 'Hall with audio-visual facilities for seminars, ceremonies and cultural events.' },
   { name: 'Cafeteria', icon: 'cup', detail: 'Subsidised cafeteria serving hygienic meals and refreshments through the academic day.' },
-  { name: 'Hostel', icon: 'home', detail: 'On-campus hostel accommodation for out-of-district students, with a warden and common study room.' },
   { name: 'Medical Room', icon: 'health', detail: 'First-aid facility with a visiting medical officer and referral arrangement with the district hospital.' },
-  { name: 'Transport', icon: 'bus', detail: 'College buses on four routes covering the town and adjoining union councils.' },
+  { name: 'Hostel', icon: 'home', detail: 'On-campus accommodation for out-of-district students, with a warden and common study room.' },
+  { name: 'Transport', icon: 'bus', detail: 'College buses covering the town and adjoining union councils.' },
   { name: 'Masjid & Prayer Area', icon: 'mosque', detail: 'Campus masjid with separate prayer space for female students.' }
 ];
 
 const galleryItems = [
-  { id: 'g01', title: 'Main Academic Block', category: 'Campus', tone: 'a',
-    image: 'assets/img/campus-main-block-thumb.jpg',
-    full: 'assets/img/campus-main-block.jpg',
-    alt: 'The main academic block of Government Degree College Zaim: a two-storey brick building with arched windows and a central tower, fronted by a wide lawn and flowering shrubs.' },
-  { id: 'g02', title: 'Central Library Reading Hall', category: 'Campus', tone: 'b' },
+  { id: 'g01', title: 'Main Academic Block', category: 'Campus', tone: 'a' },
+  { id: 'g02', title: 'Central Library', category: 'Campus', tone: 'b' },
   { id: 'g03', title: 'Computer Laboratory', category: 'Academic', tone: 'c' },
-  { id: 'g04', title: 'Annual Science Exhibition', category: 'Events', tone: 'd' },
-  { id: 'g05', title: 'Convocation Ceremony', category: 'Events', tone: 'e' },
-  { id: 'g06', title: 'Inter-Collegiate Cricket Final', category: 'Sports', tone: 'f' },
-  { id: 'g07', title: 'Botanical Garden', category: 'Campus', tone: 'b' },
-  { id: 'g08', title: 'Chemistry Practical Session', category: 'Academic', tone: 'c' },
-  { id: 'g09', title: 'Independence Day Assembly', category: 'Events', tone: 'a' },
-  { id: 'g10', title: 'Debating Society Competition', category: 'Events', tone: 'd' },
-  { id: 'g11', title: 'Sports Week Prize Distribution', category: 'Sports', tone: 'f' },
-  { id: 'g12', title: 'Campus Masjid', category: 'Campus', tone: 'e' }
+  { id: 'g04', title: 'Chemistry Laboratory', category: 'Academic', tone: 'd' },
+  { id: 'g05', title: 'Zoology Laboratory', category: 'Academic', tone: 'e' },
+  { id: 'g06', title: 'College Sports Ground', category: 'Sports', tone: 'f' },
+  { id: 'g07', title: 'Annual Science Exhibition', category: 'Events', tone: 'd' },
+  { id: 'g08', title: 'Independence Day Assembly', category: 'Events', tone: 'a' }
 ];
 
 const alumni = [
