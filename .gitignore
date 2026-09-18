@@ -45,3 +45,7 @@ next-env.d.ts
 # server's disk or object storage, not in the repository.
 /public/uploads/*
 !/public/uploads/.gitkeep
+
+# Files uploaded from the admin panel while the site is running. They cannot
+# live under public/ — Next.js snapshots that folder at build time.
+/var/

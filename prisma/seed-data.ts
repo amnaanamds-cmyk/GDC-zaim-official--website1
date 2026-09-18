@@ -274,6 +274,44 @@ const galleryItems = [
   { id: 'g08', title: 'Independence Day Assembly', category: 'Events', tone: 'a' }
 ];
 
+/**
+ * College leadership shown on the About page. The administrator can change
+ * any of these — and upload a portrait for each, the principal included —
+ * from Admin -> Website content, so this is only the starting point.
+ */
+const leaders = [
+  { role: 'Principal', name: 'Prof. Dr. Muhammad Ayub Khan', icon: 'user', detail: 'Overall academic and administrative head of the institution. Ph.D. and M.Phil. in Geography.' },
+  { role: 'Vice Principal', name: 'Prof. Arshad Iqbal', icon: 'users', detail: 'Academic coordination, discipline and timetabling.' },
+  { role: 'Registrar / Admissions', name: 'Mr. Naeem Akhtar', icon: 'clipboard', detail: 'Admissions, enrolment, student records and certificates.' },
+  { role: 'Controller of Examinations', name: 'Dr. Salman Yousaf', icon: 'chart', detail: 'Examination conduct, marks verification and result publication.' },
+  { role: 'Head, Computer Science', name: 'Prof. Shah Nawaz', icon: 'cpu', detail: 'BS Computer Science and ICS: curriculum, laboratories and final-year projects.' },
+  { role: 'Head, Zoology', name: 'Prof. Masoom Shah', icon: 'dna', detail: 'BS Zoology and FSc Biology: curriculum, laboratory and museum.' },
+  { role: 'Librarian', name: 'Mr. Naveed Anjum', icon: 'book', detail: 'Library services, catalogue and digital resources.' },
+  { role: 'Hostel Warden', name: 'Mr. Ejaz Ahmad', icon: 'home', detail: 'Hostel allocation, residence discipline and welfare.' },
+];
+
+/**
+ * Photographs that fill fixed slots in the design. Each one is replaceable
+ * from the admin panel; the slot name is what the pages look up, so a new
+ * upload takes effect everywhere that slot is used.
+ */
+const siteImages = [
+  {
+    slot: 'hero',
+    label: 'Home page banner',
+    where: 'The photograph behind the welcome message on the home page.',
+    imagePath: '/images/campus-hero.jpg',
+    alt: 'The campus of Government Degree College Zaim at golden hour.',
+  },
+  {
+    slot: 'about-campus',
+    label: 'About page photograph',
+    where: 'The photograph beside the college history on the About page.',
+    imagePath: '/images/campus-main-block.jpg',
+    alt: 'The main academic block of Government Degree College Zaim: a two-storey brick building with arched windows and a central tower, fronted by a wide lawn and flowering shrubs.',
+  },
+];
+
 const alumni = [
   { name: 'Dr. Waqar Ahmed', batch: 'BS Physics, 2012', role: 'Assistant Professor, University of Peshawar' },
   { name: 'Ms. Samina Khalid', batch: 'BS English, 2014', role: 'Section Officer, Provincial Civil Service' },
@@ -294,4 +332,5 @@ export {
   siteConfig, departments, faculty, notices, noticeCategories, events, programmes,
   admissionSchedule, admissionDocuments, books, downloads, scholarships,
   studentServices, serviceStages, facilities, galleryItems, alumni, careers,
+  leaders, siteImages,
 };

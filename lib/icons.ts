@@ -32,6 +32,7 @@ export const ICON_PATHS = {
   bus: "<rect x=\"3\" y=\"4\" width=\"18\" height=\"12\" rx=\"2\"/><path d=\"M3 10h18M7 20v-2M17 20v-2\"/><circle cx=\"7.5\" cy=\"16.5\" r=\"1\"/><circle cx=\"16.5\" cy=\"16.5\" r=\"1\"/>",
   file: "<path d=\"M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v5h5\"/>",
   download: "<path d=\"M12 3v12M7 11l5 5 5-5\"/><path d=\"M4 20h16\"/>",
+  image: "<rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><circle cx=\"8.5\" cy=\"9.5\" r=\"1.5\"/><path d=\"m21 16-5-5-5 5-2-2-6 6\"/>",
   users: "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20a6.5 6.5 0 0 1 13 0\"/><path d=\"M16 5.2a3.5 3.5 0 0 1 0 5.6M18 14.3a6.5 6.5 0 0 1 3.5 5.7\"/>",
   user: "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>",
   bell: "<path d=\"M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6Z\"/><path d=\"M10.5 20a2 2 0 0 0 3 0\"/>",

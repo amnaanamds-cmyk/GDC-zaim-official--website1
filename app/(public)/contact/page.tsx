@@ -24,7 +24,10 @@ const OFFICES = [
 ];
 
 export default async function ContactPage() {
-  const departments = await db.department.findMany({ orderBy: { order: 'asc' } });
+  const [departments, campus] = await Promise.all([
+    db.department.findMany({ orderBy: { order: 'asc' } }),
+    db.siteImage.findUnique({ where: { slot: 'hero' } }),
+  ]);
 
   return (
     <>
@@ -232,11 +235,9 @@ export default async function ContactPage() {
             <figure className="photo">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/campus-hero.jpg"
-                width={899}
-                height={720}
+                src={campus?.imagePath ?? '/images/campus-hero.jpg'}
                 loading="lazy"
-                alt="Government Degree College Zaim seen from the front lawn: a two-storey brick academic block with arched windows and a central tower."
+                alt={campus?.alt || 'Government Degree College Zaim seen from the front lawn.'}
               />
               <figcaption>
                 The main campus on Main Campus Road, Zaim. An interactive map will be embedded here once the

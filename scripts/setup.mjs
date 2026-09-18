@@ -290,4 +290,8 @@ ${c.green}${c.bold}  Setup complete.${c.reset}
     ${c.bold}bilal.ahmad${c.reset}         teacher
     ${c.bold}2023-GDCZ-CS-045${c.reset}    student
     ${c.bold}librarian${c.reset}           library staff
+
+  Signed in as ${c.bold}registrar${c.reset}, ${c.bold}Website content${c.reset} in the left-hand menu is where you
+  change the principal's photograph, the page banners, the gallery and the
+  downloadable documents — no code, no redeploy.
 `);

@@ -25,6 +25,8 @@ import {
   galleryItems,
   alumni as alumniData,
   careers as careerData,
+  leaders as leaderData,
+  siteImages as siteImageData,
 } from './seed-data';
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
@@ -61,6 +63,8 @@ async function main() {
   await db.serviceRequest.deleteMany();
   await db.contactMessage.deleteMany();
   await db.galleryItem.deleteMany();
+  await db.leader.deleteMany();
+  await db.siteImage.deleteMany();
   await db.facility.deleteMany();
   await db.alumnus.deleteMany();
   await db.careerOpportunity.deleteMany();
@@ -360,6 +364,22 @@ async function main() {
         : null,
     })),
   });
+  await db.leader.createMany({
+    data: leaderData.map((l, i) => ({
+      role: l.role,
+      name: l.name,
+      detail: l.detail,
+      icon: l.icon,
+      order: i,
+    })),
+  });
+  await db.siteImage.createMany({
+    data: siteImageData.map((img) => ({
+      slot: img.slot,
+      imagePath: img.imagePath,
+      alt: img.alt,
+    })),
+  });
   await db.alumnus.createMany({
     data: alumniData.map((a, i) => ({ name: a.name, batch: a.batch, role: a.role, order: i })),
   });
@@ -409,6 +429,7 @@ async function main() {
     notices: await db.notice.count(),
     events: await db.event.count(),
     books: await db.book.count(),
+    leaders: await db.leader.count(),
   };
   console.log('\nSeeded:', counts);
   console.log(`\nDemo accounts (password: ${DEMO_PASSWORD})`);

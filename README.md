@@ -96,10 +96,17 @@ Change these before the site is used for anything real.
 ## What each role can do
 
 **Administrator**
-- Publish notices (with category, department targeting, scheduled publication and expiry) — they appear on the public site instantly
+- Publish announcements (with category, department targeting, scheduled publication, expiry and an **attached PDF**) — they appear on the public site instantly
+- **Change the principal's photograph** and every other leadership portrait, name and job description
+- **Replace the home page banner and the About page photograph**
+- **Fill the gallery tiles**, add new ones and delete them
+- **Publish downloadable documents** — prospectus, forms, datesheets, policies
 - **Upload event photographs and videos from the local drive**, and delete them
 - Verify marks submitted by teachers, which is what makes results visible to students
 - See enrolment figures, average attendance, open complaints and the activity log
+
+None of this needs a developer, a code change or a redeploy. See
+[Uploading and changing pictures](#uploading-and-changing-pictures).
 
 **Teacher**
 - Mark daily attendance for assigned courses; saving again for the same date updates it
@@ -115,17 +122,74 @@ Change these before the site is used for anything real.
 - Every public page, site-wide search, event photographs and videos
 - Submit an admission application with document upload, a complaint, a certificate request (each returns a tracking reference) and a general enquiry
 
-## Event media upload
+## Uploading and changing pictures
 
-The feature lives on `/events` (and `/portal/admin/media`). The button is visible only to a signed-in
-administrator; everyone else sees a sign-in hint.
+Everything below is done in a web browser. Nothing here requires the code, a terminal or a new deployment.
 
-- Choose files or drag them in; photos and videos both supported
-- Validated for type and size **in the browser and again on the server** — the server check is the one that counts
-- JPG, PNG, WebP, GIF, AVIF up to 8 MB; MP4, WebM, OGG, MOV up to 100 MB; 12 files per upload
-- A still is captured from each video in the browser and stored as its thumbnail
-- Each file gets a description used as alt text
-- Files are written to `public/uploads` under generated names — never the name the browser supplied — with metadata in Postgres
+### Signing in
+
+Go to **`/portal/login`** and sign in as the administrator:
+
+| | |
+|---|---|
+| Username | `registrar` |
+| Password | `gdc12345` |
+
+Change that password before the site is used for real — see [Security](#security).
+
+Only the `ADMIN` role sees these screens. A teacher, a student or a signed-out visitor who types the
+address in is sent away, and the upload endpoints answer `403` even if the request is made by hand.
+
+### Where each picture is changed
+
+| What you want to change | Where |
+|---|---|
+| Principal's photograph, and every other leadership portrait | **Admin → Website content → Principal & college leadership** |
+| The big photograph on the home page | **Admin → Website content → Page photographs → Home page banner** |
+| The photograph on the About page | **Admin → Website content → Page photographs → About page photograph** |
+| Gallery tiles — library, computer lab, chemistry lab, zoology lab | **Admin → Website content → Photo gallery** |
+| Prospectus, forms, datesheets, policies | **Admin → Website content → Downloadable documents** |
+| Event photographs and videos | **Admin → Event media**, or the button on `/events` |
+| Announcements, with an optional PDF attached | **Admin → Dashboard → Publish a notice** |
+
+### Changing the principal's photograph
+
+1. Sign in as `registrar`
+2. **Website content** in the left-hand menu
+3. Find the **Principal** card at the top of *Principal & college leadership*
+4. **Choose file** — the picture you pick appears straight away, marked *New — not saved yet*
+5. Correct the name or responsibilities in the same card if you need to
+6. **Save this person**
+
+The About page shows the new photograph immediately. **Remove photograph** puts the card back to its icon.
+
+### Filling a gallery tile
+
+The library and laboratory tiles ship as coloured placeholders. Open **Website content → Photo gallery**,
+choose a file on the tile you want, write a one-line description for screen readers, and **Save this tile**.
+*Add a new tile* at the end of the grid creates one that was not there before.
+
+### Publishing an announcement with a document
+
+**Admin → Dashboard**, fill in the notice, then use **Attachment** to add the datesheet or merit list.
+The notice page offers it as a download, under its original filename.
+
+### What the site accepts
+
+| | Formats | Limit |
+|---|---|---|
+| Photographs | JPG, PNG, WebP, GIF, AVIF | 8 MB |
+| Videos (events only) | MP4, WebM, OGG, MOV | 100 MB |
+| Documents | PDF, Word, Excel | 20 MB |
+
+Every file is checked in the browser for an instant answer **and again on the server**, which is the check
+that decides. Files are stored under a generated name — never the name the browser supplied.
+
+### Event media upload
+
+The uploader on `/events` and `/portal/admin/media` takes photographs and videos in batches of up to 12 and
+files them under the event they belong to. A still is captured from each video in the browser and stored as
+its thumbnail, so a video tile has something to show without video tooling on the server.
 
 ## Project structure
 
@@ -139,8 +203,10 @@ app/
   portal/login/        Sign-in page
   portal/(dash)/       Protected dashboards: admin, teacher, student
   api/                 Route handlers for file uploads (event media, admission documents)
-  actions/             Server actions: auth, admin, teaching, public forms
+  uploads/[...path]/   Serves uploaded files — they cannot live under public/
+  actions/             Server actions: auth, admin, teaching, public forms, website content
 components/            Shared React components (header, nav, uploader, media gallery…)
+  admin/               The website-content editor: photo picker, forms, delete buttons
 lib/
   db.ts                Prisma client
   auth.ts              Sessions, password hashing, RBAC helpers
@@ -148,10 +214,11 @@ lib/
   search.ts            Site-wide search
   i18n.ts              English / Urdu strings
 prisma/
-  schema.prisma        28 models covering every SRS module
+  schema.prisma        30 models covering every SRS module
   seed.ts              Seeds content and demo accounts
   seed-data.ts         The college's content
-public/uploads/        Uploaded media (gitignored — runtime data)
+public/images/         Photographs shipped with the site (the fallbacks)
+var/uploads/           Files uploaded from the admin panel (gitignored — runtime data)
 ```
 
 ## Deploying it live
@@ -198,13 +265,21 @@ from the Vercel dashboard at any time.
 
 ### Where uploads are stored
 
-| | Local development | Hosted |
+| | On your own server | Hosted on Vercel |
 |---|---|---|
-| Backend | `public/uploads` on disk | Vercel Blob |
+| Backend | `var/uploads` on disk | Vercel Blob |
 | Chosen by | no `BLOB_READ_WRITE_TOKEN` | `BLOB_READ_WRITE_TOKEN` present |
+| Served by | `app/uploads/[...path]/route.ts` | Blob's own CDN |
 
 `lib/storage.ts` is the only file that knows the difference. To use S3 or Cloudinary instead, that is the
-one file to change.
+one file to change. Set `UPLOAD_DIR` to put the files somewhere else on disk — a mounted volume, say.
+
+Uploads deliberately do **not** live under `public/`. Next.js takes a snapshot of that folder when the site
+is built, so a photograph uploaded while the site is running would return 404 until the next build.
+
+**On Vercel you must add Blob storage**, or uploading will fail: the filesystem there is read-only and is
+wiped on every deploy. Project → **Storage** → **Create Database** → **Blob**, connect it to the project,
+then redeploy so the new token is picked up.
 
 ## Security
 

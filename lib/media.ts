@@ -16,8 +16,33 @@ export const MEDIA_POLICY = {
     maxBytes: 100 * 1024 * 1024,
     label: 'MP4, WebM, OGG or MOV up to 100 MB',
   },
+  /** Prospectus, forms, datesheets and notice attachments. */
+  document: {
+    mimes: [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
+    maxBytes: 20 * 1024 * 1024,
+    label: 'PDF, Word or Excel up to 20 MB',
+  },
   maxFilesPerUpload: 12,
 } as const;
+
+/** Extension shown in the downloads table, derived from the type the browser sent. */
+const DOC_LABELS: Record<string, string> = {
+  'application/pdf': 'PDF',
+  'application/msword': 'DOC',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
+  'application/vnd.ms-excel': 'XLS',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'XLSX',
+};
+
+export function documentLabel(mime: string) {
+  return DOC_LABELS[mime] ?? 'FILE';
+}
 
 export type MediaKindLower = 'image' | 'video';
 
@@ -44,4 +69,35 @@ export function validateFile(file: { type: string; size: number; name: string })
 export function safeFilename(originalName: string, id: string) {
   const ext = (originalName.match(/\.[a-zA-Z0-9]{1,5}$/)?.[0] ?? '').toLowerCase();
   return `${id}${ext}`;
+}
+
+/**
+ * Checks a single photograph — a portrait, a gallery tile, a page banner.
+ * Videos are deliberately not allowed here: these slots render as <img>.
+ */
+export function validateImage(file: { type: string; size: number; name: string }):
+  | { ok: true }
+  | { ok: false; error: string } {
+  if (!(MEDIA_POLICY.image.mimes as readonly string[]).includes(file.type)) {
+    return { ok: false, error: `${file.name}: not a supported photograph. Use ${MEDIA_POLICY.image.label}.` };
+  }
+  if (file.size === 0) return { ok: false, error: `${file.name}: the file is empty.` };
+  if (file.size > MEDIA_POLICY.image.maxBytes) {
+    return { ok: false, error: `${file.name}: too large. Photographs must be under 8 MB.` };
+  }
+  return { ok: true };
+}
+
+/** Checks a document attached to a notice or published under Downloads. */
+export function validateDocument(file: { type: string; size: number; name: string }):
+  | { ok: true }
+  | { ok: false; error: string } {
+  if (!(MEDIA_POLICY.document.mimes as readonly string[]).includes(file.type)) {
+    return { ok: false, error: `${file.name}: not a supported document. Use ${MEDIA_POLICY.document.label}.` };
+  }
+  if (file.size === 0) return { ok: false, error: `${file.name}: the file is empty.` };
+  if (file.size > MEDIA_POLICY.document.maxBytes) {
+    return { ok: false, error: `${file.name}: too large. Documents must be under 20 MB.` };
+  }
+  return { ok: true };
 }

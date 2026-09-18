@@ -12,17 +12,6 @@ export const metadata: Metadata = {
 };
 export const dynamic = 'force-dynamic';
 
-const ADMIN_TEAM: { role: string; name: string; detail: string; icon: IconName }[] = [
-  { role: 'Principal', name: 'Prof. Dr. Muhammad Ayub Khan', detail: 'Overall academic and administrative head of the institution. Ph.D. and M.Phil. in Geography.', icon: 'user' },
-  { role: 'Vice Principal', name: 'Prof. Arshad Iqbal', detail: 'Academic coordination, discipline and timetabling.', icon: 'users' },
-  { role: 'Registrar / Admissions', name: 'Mr. Naeem Akhtar', detail: 'Admissions, enrolment, student records and certificates.', icon: 'clipboard' },
-  { role: 'Controller of Examinations', name: 'Dr. Salman Yousaf', detail: 'Examination conduct, marks verification and result publication.', icon: 'chart' },
-  { role: 'Head, Computer Science', name: 'Prof. Shah Nawaz', detail: 'BS Computer Science and ICS: curriculum, laboratories and final-year projects.', icon: 'cpu' },
-  { role: 'Head, Zoology', name: 'Prof. Masoom Shah', detail: 'BS Zoology and FSc Biology: curriculum, laboratory and museum.', icon: 'dna' },
-  { role: 'Librarian', name: 'Mr. Naveed Anjum', detail: 'Library services, catalogue and digital resources.', icon: 'book' },
-  { role: 'Hostel Warden', name: 'Mr. Ejaz Ahmad', detail: 'Hostel allocation, residence discipline and welfare.', icon: 'home' },
-];
-
 const STRUCTURE = [
   ['1', 'Higher Education Department, Govt. of KP', 'Policy, budget, sanctioned posts and fee structure'],
   ['2', 'Principal', 'Institutional leadership, statutory correspondence, final approvals'],
@@ -32,12 +21,14 @@ const STRUCTURE = [
 ];
 
 export default async function AboutPage() {
-  const [departments, programmes, faculty, students, facilities] = await Promise.all([
+  const [departments, programmes, faculty, students, facilities, leaders, campus] = await Promise.all([
     db.department.count(),
     db.programme.count(),
     db.faculty.count(),
     db.student.count(),
     db.facility.findMany({ orderBy: { order: 'asc' }, take: 6 }),
+    db.leader.findMany({ orderBy: { order: 'asc' } }),
+    db.siteImage.findUnique({ where: { slot: 'about-campus' } }),
   ]);
 
   return (
@@ -104,11 +95,9 @@ export default async function AboutPage() {
               <figure className="photo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/campus-main-block.jpg"
-                  width={899}
-                  height={1599}
+                  src={campus?.imagePath ?? '/images/campus-main-block.jpg'}
                   loading="lazy"
-                  alt="The main academic block of Government Degree College Zaim: a two-storey brick building with arched windows and a central tower, fronted by a wide lawn and flowering shrubs."
+                  alt={campus?.alt || 'The main academic block of Government Degree College Zaim.'}
                 />
                 <figcaption>The main academic block and front lawn.</figcaption>
               </figure>
@@ -196,9 +185,14 @@ export default async function AboutPage() {
           </div>
 
           <div className="grid grid-3">
-            {ADMIN_TEAM.map((m) => (
-              <div className="card" key={m.role}>
-                <span className="card-icon"><Icon name={m.icon} /></span>
+            {leaders.map((m) => (
+              <div className="card" key={m.id}>
+                {m.photoPath ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img className="card-portrait" src={m.photoPath} alt={m.alt ?? `${m.name}, ${m.role}.`} loading="lazy" />
+                ) : (
+                  <span className="card-icon"><Icon name={(m.icon as IconName) ?? 'user'} /></span>
+                )}
                 <h3>{m.role}</h3>
                 <p>{m.name}</p>
                 <p className="mb-0" style={{ fontSize: '.88rem' }}>{m.detail}</p>

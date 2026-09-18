@@ -57,13 +57,19 @@ export default async function DownloadsPage({ searchParams }: { searchParams: Pr
                         <span style={{ color: 'var(--brand)', display: 'inline-flex', width: 18, height: 18 }}>
                           <Icon name="file" />
                         </span>
-                        <strong>{d.title}</strong>
+                        {d.filePath ? (
+                          <a href={d.filePath} download>
+                            <strong>{d.title}</strong>
+                          </a>
+                        ) : (
+                          <strong>{d.title}</strong>
+                        )}
                       </div>
                     </td>
                     <td><span className="badge badge-brand">{d.category}</span></td>
                     <td>{fmtShort(d.publishedAt)}</td>
                     <td>{d.fileType}</td>
-                    <td>{d.size}</td>
+                    <td>{d.filePath ? d.size : <span className="text-muted">Not yet uploaded</span>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -72,9 +78,8 @@ export default async function DownloadsPage({ searchParams }: { searchParams: Pr
 
           <div className="callout" style={{ marginTop: '2rem' }}>
             <p className="mb-0">
-              <strong>Note:</strong> the document index is managed from the admin panel. Upload of the actual
-              PDF files uses the same storage as event media; until a file is attached, an entry is listed for
-              information only.
+              <strong>Note:</strong> documents are published by the college administration. A title without a
+              file size has been announced but not yet uploaded — it is listed here for information only.
             </p>
           </div>
         </div>

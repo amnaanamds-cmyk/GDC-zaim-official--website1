@@ -375,13 +375,14 @@ html[lang='ur'] .brand-sub { letter-spacing: normal; text-transform: none; }
 }
 /* Campus photograph behind the hero. The overlay below keeps the white text
    above the 4.5:1 contrast ratio regardless of what the photo is doing.
-   NOTE: the url() lives here, not in an inline custom property — a url() inside
-   a custom property is resolved relative to this stylesheet's location, so an
-   inline `--hero-photo: url('assets/img/…')` would resolve to assets/css/assets/img/. */
+   The administrator replaces this photograph from Admin -> Website content, so
+   the page sets --hero-photo inline and this rule falls back to the one that
+   ships with the site. The inline value must be a root-absolute path or a full
+   URL: a url() written relative would resolve against the document, not here. */
 .hero--photo {
   background-image:
     linear-gradient(100deg, rgba(5,37,26,.93) 0%, rgba(8,50,36,.82) 42%, rgba(5,37,26,.62) 100%),
-    url('/images/campus-hero.jpg');
+    var(--hero-photo, url('/images/campus-hero.jpg'));
   background-size: cover, cover;
   background-position: center, center 32%;
   background-repeat: no-repeat, no-repeat;
@@ -400,7 +401,7 @@ html[lang='ur'] .brand-sub { letter-spacing: normal; text-transform: none; }
   .hero--photo {
     background-image:
       linear-gradient(180deg, rgba(5,37,26,.9) 0%, rgba(8,50,36,.84) 55%, rgba(5,37,26,.92) 100%),
-      url('/images/campus-hero.jpg');
+      var(--hero-photo, url('/images/campus-hero.jpg'));
   }
 }
 .hero::after {
@@ -644,8 +645,12 @@ input::placeholder, textarea::placeholder { color: var(--ink-400); }
 /* ================================================================
    8. Portal (dashboard) styles
    ================================================================ */
-.portal-shell { display: grid; grid-template-columns: 264px 1fr; min-height: 100vh; }
-@media (max-width: 900px) { .portal-shell { grid-template-columns: 1fr; } }
+/* minmax(0, …) on both tracks: a plain `1fr` takes its minimum size from its
+   content, so a data table with a min-width stretched the whole shell past the
+   viewport instead of scrolling inside its own .table-wrap. */
+.portal-shell { display: grid; grid-template-columns: 264px minmax(0, 1fr); min-height: 100vh; }
+.portal-shell > * { min-width: 0; }
+@media (max-width: 900px) { .portal-shell { grid-template-columns: minmax(0, 1fr); } }
 .portal-side { background: var(--green-950); color: #cfe0d8; padding: var(--sp-5) var(--sp-4); }
 .portal-side .brand-name, .portal-side .brand-sub { color: #fff; }
 .portal-side .brand-sub { color: #9fb3ab; }
@@ -966,4 +971,101 @@ dialog.gdc-dialog.viewer { width: min(100% - 2rem, 940px); }
    sticky header. */
 @media (max-width: 1080px) {
   body { overflow-x: clip; }
+}
+
+/* ------------------------------------------------------------------ *
+ * Admin: website content editor
+ * ------------------------------------------------------------------ */
+.admin-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-5);
+  margin-top: var(--sp-5);
+}
+.admin-card-grid > * { min-width: 0; }
+
+.admin-edit-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: var(--sp-5);
+}
+.admin-edit-card--new { border-style: dashed; background: var(--surface-2); }
+.admin-edit-card h3 { margin-top: 0; }
+
+.admin-photo-label {
+  display: block;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  margin-bottom: var(--sp-2);
+}
+
+/* The frame keeps every card the same height whether or not a photograph
+   has been uploaded, so the grid does not jump about as they are filled. */
+.admin-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface-3);
+  border: 1px solid var(--line-soft);
+  margin-bottom: var(--sp-3);
+}
+.admin-photo--wide { aspect-ratio: 16 / 9; }
+.admin-photo--portrait { aspect-ratio: 4 / 5; }
+.admin-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.admin-photo-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  color: var(--text-muted);
+  font-size: .85rem;
+}
+.admin-photo-empty svg { width: 28px; height: 28px; }
+
+.admin-photo-flag {
+  position: absolute;
+  inset-inline-start: var(--sp-2);
+  inset-block-start: var(--sp-2);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  border-radius: 999px;
+  padding: .2rem .6rem;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .admin-card-grid { grid-template-columns: 1fr; }
+}
+
+/* A leadership card showing an uploaded portrait instead of its icon. */
+.card-portrait {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin-bottom: var(--sp-3);
+  border: 2px solid var(--brand-soft);
+}
+
+/* Upload form beside the list of what is already published. The two columns
+   become one on a narrow screen; the table keeps its own horizontal scroll
+   inside .table-wrap rather than widening the page. */
+.admin-doc-split {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  gap: var(--sp-6);
+  align-items: start;
+  margin-top: var(--sp-5);
+}
+.admin-doc-split > * { min-width: 0; }
+@media (max-width: 900px) {
+  .admin-doc-split { grid-template-columns: minmax(0, 1fr); }
 }

@@ -27,15 +27,17 @@ export default async function HomePage() {
   const locale = await getLocale();
   const t = translator(locale);
 
-  const [notices, events, stats, departments, schedule, facilities, gallery] = await Promise.all([
-    publishedNotices(5),
-    upcomingEvents(3),
-    siteStats(),
-    db.department.findMany({ orderBy: { order: 'asc' }, take: 6 }),
-    db.admissionStage.findMany({ orderBy: { order: 'asc' } }),
-    db.facility.findMany({ orderBy: { order: 'asc' }, take: 6 }),
-    db.galleryItem.findMany({ orderBy: { order: 'asc' }, take: 4 }),
-  ]);
+  const [notices, events, stats, departments, schedule, facilities, gallery, heroImage] =
+    await Promise.all([
+      publishedNotices(5),
+      upcomingEvents(3),
+      siteStats(),
+      db.department.findMany({ orderBy: { order: 'asc' }, take: 6 }),
+      db.admissionStage.findMany({ orderBy: { order: 'asc' } }),
+      db.facility.findMany({ orderBy: { order: 'asc' }, take: 6 }),
+      db.galleryItem.findMany({ orderBy: { order: 'asc' }, take: 4 }),
+      db.siteImage.findUnique({ where: { slot: 'hero' } }),
+    ]);
 
   const pinned = notices.find((n) => n.pinned);
 
@@ -58,7 +60,18 @@ export default async function HomePage() {
       )}
 
       {/* ---------------- Hero ---------------- */}
-      <section className="hero hero--photo">
+      {/* The banner is whatever the administrator last uploaded; the stylesheet
+          falls back to the photograph shipped with the site if the slot is empty.
+          The path must be root-absolute, which every stored upload URL is. */}
+      <section
+        className="hero hero--photo"
+        style={
+          heroImage
+            ? ({ '--hero-photo': `url("${heroImage.imagePath}")` } as React.CSSProperties)
+            : undefined
+        }
+        aria-label={heroImage?.alt || undefined}
+      >
         <div className="container">
           <div className="hero-grid">
             <div>

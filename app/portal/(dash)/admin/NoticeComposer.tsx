@@ -3,6 +3,7 @@
 import { useActionState, useRef, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { publishNotice, type ActionState } from '@/app/actions/admin';
+import { MEDIA_POLICY } from '@/lib/media';
 
 const CATEGORIES = ['Admission', 'Examination', 'Academic', 'Scholarship', 'Holiday', 'Emergency', 'General'];
 
@@ -66,6 +67,19 @@ export default function NoticeComposer({ departments }: { departments: { id: str
         <div className="field">
           <label htmlFor="nt-body">Notice text</label>
           <textarea id="nt-body" name="body" required minLength={20} />
+        </div>
+
+        <div className="field">
+          <label htmlFor="nt-file">Attachment (optional)</label>
+          <input
+            type="file"
+            id="nt-file"
+            name="attachment"
+            accept=".pdf,.doc,.docx,.xls,.xlsx,application/pdf"
+          />
+          <span className="hint">
+            A datesheet, merit list or form to go with the announcement. {MEDIA_POLICY.document.label}.
+          </span>
         </div>
 
         <label style={{ display: 'flex', gap: '.5rem', alignItems: 'center', fontSize: '.9rem', fontWeight: 600 }}>

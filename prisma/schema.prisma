@@ -42,6 +42,8 @@ model User {
   marksSubmitted    Mark[]            @relation("MarkSubmittedBy")
   marksVerified     Mark[]            @relation("MarkVerifiedBy")
   attendanceMarked  AttendanceRecord[]
+  siteImages        SiteImage[]
+  documents         Download[]
 }
 
 model Session {
@@ -232,6 +234,7 @@ model Notice {
   publishAt    DateTime    @default(now())
   expiresAt    DateTime?
   fileUrl      String?
+  fileName     String?
   authorId     String?
   author       User?       @relation("NoticeAuthor", fields: [authorId], references: [id], onDelete: SetNull)
   createdAt    DateTime    @default(now())
@@ -311,6 +314,10 @@ model Download {
   fileType    String   @default("PDF")
   size        String
   filePath    String?
+  mime        String?
+  bytes       Int      @default(0)
+  uploadedById String?
+  uploadedBy  User?    @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
   publishedAt DateTime @default(now())
 }
 
@@ -429,6 +436,34 @@ model GalleryItem {
   alt       String?
   order     Int      @default(0)
   createdAt DateTime @default(now())
+}
+
+/// A member of the college leadership, shown on the About page.
+/// The administrator edits the details and uploads the portrait — the
+/// principal's photograph included — from Admin -> Website content.
+model Leader {
+  id        String   @id @default(cuid())
+  role      String
+  name      String
+  detail    String
+  icon      String   @default("user")
+  photoPath String?
+  alt       String?
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+/// A photograph filling a fixed slot in the site design: the banner behind
+/// the home page hero, the campus photograph on the About page. Keyed by
+/// slot, so uploading a new one replaces the old in place and every page
+/// using that slot changes at once.
+model SiteImage {
+  slot        String   @id
+  imagePath   String
+  alt         String   @default("")
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 model Facility {

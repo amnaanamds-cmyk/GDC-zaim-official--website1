@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { Role, MarkStatus } from '@prisma/client';
 import { db } from '@/lib/db';
 import { getSessionUser, logActivity } from '@/lib/auth';
+import { validateDocument } from '@/lib/media';
+import { saveUpload, deleteUpload } from '@/lib/storage';
 
 async function requireAdmin() {
   const user = await getSessionUser();
@@ -48,6 +50,28 @@ export async function publishNotice(_prev: ActionState, formData: FormData): Pro
   }
   const data = parsed.data;
 
+  // An announcement may carry a document — a datesheet, a merit list, a form.
+  let fileUrl: string | null = null;
+  let fileName: string | null = null;
+  const attachment = formData.get('attachment');
+  if (attachment instanceof File && attachment.size > 0) {
+    const check = validateDocument({
+      type: attachment.type,
+      size: attachment.size,
+      name: attachment.name,
+    });
+    if (!check.ok) return { error: check.error };
+
+    const stored = await saveUpload(
+      Buffer.from(await attachment.arrayBuffer()),
+      attachment.name,
+      attachment.type,
+      'notices',
+    );
+    fileUrl = stored.url;
+    fileName = attachment.name.slice(0, 180);
+  }
+
   const notice = await db.notice.create({
     data: {
       title: data.title,
@@ -57,8 +81,14 @@ export async function publishNotice(_prev: ActionState, formData: FormData): Pro
       pinned: data.pinned,
       publishAt: data.publishAt ? new Date(data.publishAt) : new Date(),
       expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+      fileUrl,
+      fileName,
       authorId: user.id,
     },
+  }).catch(async (err) => {
+    // Do not leave an orphaned attachment behind if the row cannot be written.
+    await deleteUpload(fileUrl);
+    throw err;
   });
 
   await logActivity(user.id, 'PUBLISH', 'Notice', notice.id, data.title);
@@ -67,7 +97,11 @@ export async function publishNotice(_prev: ActionState, formData: FormData): Pro
   revalidatePath('/notices');
   revalidatePath('/portal/admin');
 
-  return { ok: `Published “${data.title}”. It is live on the notice board now.` };
+  return {
+    ok: fileName
+      ? `Published “${data.title}” with ${fileName} attached. It is live on the notice board now.`
+      : `Published “${data.title}”. It is live on the notice board now.`,
+  };
 }
 
 /** Verify a course's submitted marks so students can see their results. */

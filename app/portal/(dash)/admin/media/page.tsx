@@ -13,6 +13,7 @@ export const dynamic = 'force-dynamic';
 const LINKS: PortalLink[] = [
   { label: 'Event media', href: '/portal/admin/media', icon: 'mic' },
   { label: 'Dashboard', href: '/portal/admin', icon: 'grid' },
+  { label: 'Website content', href: '/portal/admin/website', icon: 'image' },
   { label: 'Notices', href: '/portal/admin#notices', icon: 'bell' },
   { label: 'Results verification', href: '/portal/admin#results', icon: 'chart' },
 ];
@@ -73,8 +74,10 @@ export default async function AdminMediaPage() {
         <EventMediaGallery items={items} canManage />
 
         <p className="form-note" style={{ marginTop: '1.5rem' }}>
-          Files are stored under <code>public/uploads</code> on the server and appear on the public
-          <a href="/events#media"> events page</a> immediately. Deleting an item removes the file from disk.
+          Uploads appear on the public <a href="/events#media">events page</a> immediately, and
+          deleting an item removes the file as well. To change the principal&apos;s photograph, the
+          page banners, the gallery or the downloadable documents, use{' '}
+          <a href="/portal/admin/website">Website content</a>.
         </p>
       </section>
     </PortalShell>

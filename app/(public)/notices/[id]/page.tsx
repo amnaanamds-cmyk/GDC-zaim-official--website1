@@ -52,9 +52,9 @@ export default async function NoticePage({ params }: { params: Promise<{ id: str
 
           <div className="cluster" style={{ marginTop: '2rem' }}>
             {notice.fileUrl && (
-              <Link className="btn btn-primary btn-sm" href="/downloads">
-                Download attachment
-              </Link>
+              <a className="btn btn-primary btn-sm" href={notice.fileUrl} download>
+                Download {notice.fileName ?? 'attachment'}
+              </a>
             )}
             <Link className="btn btn-outline btn-sm" href="/notices">
               Back to all notices
