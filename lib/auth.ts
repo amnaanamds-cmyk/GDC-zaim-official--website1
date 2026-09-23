@@ -5,6 +5,7 @@ import { cache } from 'react';
 import bcrypt from 'bcryptjs';
 import { Role } from '@prisma/client';
 import { db } from './db';
+import { MIN_PASSWORD_LENGTH } from './password';
 
 const COOKIE = process.env.SESSION_COOKIE_NAME || 'gdc_session';
 const SESSION_HOURS = 8;
@@ -18,10 +19,35 @@ export type SessionUser = {
   username: string;
   email: string;
   role: Role;
+  /** True while the password was set by someone other than its holder. */
+  mustChangePassword: boolean;
 };
 
 export function hashPassword(plain: string) {
   return bcrypt.hash(plain, BCRYPT_ROUNDS);
+}
+
+/** Checks a password against a stored hash. Used when someone changes their own. */
+export function verifyPassword(plain: string, hash: string) {
+  return bcrypt.compare(plain, hash);
+}
+
+export { MIN_PASSWORD_LENGTH } from './password';
+
+/**
+ * Ends every session belonging to an account. Called when its password is
+ * changed or reset and when it is deactivated, so a stolen or shared session
+ * cannot outlive the credentials it was opened with.
+ */
+export async function revokeSessions(userId: string, exceptSessionId?: string) {
+  await db.session.deleteMany({
+    where: { userId, ...(exceptSessionId ? { id: { not: exceptSessionId } } : {}) },
+  });
+}
+
+/** The current session's id, for keeping it alive while ending the others. */
+export async function currentSessionId(): Promise<string | null> {
+  return (await cookies()).get(COOKIE)?.value ?? null;
 }
 
 /**
@@ -51,6 +77,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     username: user.username,
     email: user.email,
     role: user.role,
+    mustChangePassword: user.mustChangePassword,
   };
 });
 

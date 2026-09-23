@@ -47,6 +47,13 @@ export default function PortalShell({
               </li>
             ))}
             <li style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,.12)', paddingTop: '1rem' }}>
+              {/* Everyone, whatever their role, can change their own password. */}
+              <Link href="/portal/account">
+                <Icon name="shield" />
+                <span>Your password</span>
+              </Link>
+            </li>
+            <li>
               <form action={logoutAction}>
                 <button type="submit" className="portal-signout">
                   <Icon name="logout" />

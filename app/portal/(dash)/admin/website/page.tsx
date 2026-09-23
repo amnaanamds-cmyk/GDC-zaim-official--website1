@@ -29,6 +29,7 @@ const LINKS: PortalLink[] = [
   { label: 'Website content', href: '/portal/admin/website', icon: 'image' },
   { label: 'College profile', href: '/portal/admin/website#institution', icon: 'shield' },
   { label: 'Dashboard', href: '/portal/admin', icon: 'grid' },
+  { label: 'Accounts', href: '/portal/admin/accounts', icon: 'users' },
   { label: 'Event media', href: '/portal/admin/media', icon: 'mic' },
   { label: 'Announcements', href: '/portal/admin#notices', icon: 'bell' },
   { label: 'Results verification', href: '/portal/admin#results', icon: 'chart' },

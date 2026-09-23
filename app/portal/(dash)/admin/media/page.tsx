@@ -14,6 +14,7 @@ export const dynamic = 'force-dynamic';
 const LINKS: PortalLink[] = [
   { label: 'Event media', href: '/portal/admin/media', icon: 'mic' },
   { label: 'Dashboard', href: '/portal/admin', icon: 'grid' },
+  { label: 'Accounts', href: '/portal/admin/accounts', icon: 'users' },
   { label: 'Website content', href: '/portal/admin/website', icon: 'image' },
   { label: 'Notices', href: '/portal/admin#notices', icon: 'bell' },
   { label: 'Results verification', href: '/portal/admin#results', icon: 'chart' },

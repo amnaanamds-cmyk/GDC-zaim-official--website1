@@ -185,6 +185,34 @@ Press **Create the site** and you are signed in as the administrator, on your ow
 administrator account exists nobody can reach `/setup` and appoint themselves — visiting it redirects
 to the sign-in page, and posting to it directly is refused.
 
+### 6. Create the accounts for your staff and students
+
+Signed in as the administrator, go to **Accounts**. The wizard created one
+account — yours — and nothing else. Everyone else is created here:
+
+| Role | Can do |
+|---|---|
+| Teacher | Mark attendance and submit marks for their courses |
+| Student | See their own attendance, marks and results |
+| Library staff | Library records |
+| Administrator | Everything, including accounts |
+
+Creating a teacher or student also creates the staff or enrolment record they
+work through, or links the account to one that already exists without a login.
+
+You type a password and pass it on. **The portal makes them replace it the
+first time they sign in** — until they do, the only page they can reach is the
+one that changes it, and the password you chose stops working the moment they
+do. Nobody, including you, can read anyone's password afterwards; if someone
+loses theirs, use **Reset password**.
+
+Accounts are never deleted, only deactivated: a teacher who has left still
+marked the attendance on record.
+
+**Create a second administrator.** The setup wizard closes permanently once the
+first account exists, so if your only administrator account is lost there is no
+way back in.
+
 ### Afterwards
 
 Everything entered during setup can be corrected from **Admin → Website content → College profile**,
@@ -225,6 +253,7 @@ Two things are the same in every copy and would need a code change:
 | The college's name, contact details, principal, crest | `Institution` row in the database | the setup wizard, then Admin → Website content |
 | Departments, faculty, notices, events, documents | the database | the admin panel |
 | Photographs and uploaded files | `var/uploads`, or Vercel Blob | the admin panel |
+| Staff, student and administrator logins | the database | Admin → Accounts |
 | Page layout, wording that is the same everywhere | the code | a developer |
 
 ## Uploading and changing pictures
@@ -396,6 +425,9 @@ then redeploy so the new token is picked up.
 - **Every role check runs on the server.** Hiding a button is not a permission check: posting directly to the upload API as a student or anonymous visitor returns 403
 - Uploads validated for MIME type and size server-side, written under generated filenames
 - All form input validated with Zod on the server; grades and merit scores are computed server-side and never accepted from the browser
+- A password an administrator sets is a temporary credential: the holder must replace it before the portal opens to them, and it stops working once they have
+- Changing or resetting a password ends every other session for that account, so a stolen session cannot outlive the credential it was opened with
+- The last active administrator cannot be deactivated — the setup wizard is closed, so that would lock the college out of its own site permanently
 - Administrative actions recorded in an activity log with the responsible account
 
 ## Useful commands
