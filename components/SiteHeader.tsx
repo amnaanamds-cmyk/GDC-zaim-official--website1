@@ -5,12 +5,14 @@ import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
 import Icon from './Icon';
 import { NAV } from '@/lib/nav';
-import { SITE } from '@/lib/site';
+import { site, localised } from '@/lib/site';
 import { getLocale, translator } from '@/lib/i18n';
 
 export default async function SiteHeader() {
   const locale = await getLocale();
   const t = translator(locale);
+  const inst = await site();
+  const L = localised(inst, locale);
 
   // Navigation labels are resolved on the server and handed to the client
   // component, so the menu is translated even before hydration.
@@ -29,15 +31,15 @@ export default async function SiteHeader() {
       <div className="topbar">
         <div className="container">
           <div className="topbar-meta">
-            <span>{SITE.affiliation}</span>
+            <span>{inst.affiliation}</span>
             <span className="dot" aria-hidden="true">
               •
             </span>
-            <a href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a>
+            <a href={`tel:${inst.phone.replace(/\s/g, '')}`}>{inst.phone}</a>
             <span className="dot" aria-hidden="true">
               •
             </span>
-            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+            <a href={`mailto:${inst.email}`}>{inst.email}</a>
           </div>
           <div className="topbar-tools">
             <Link href="/downloads" className="desktop-only">
@@ -55,10 +57,10 @@ export default async function SiteHeader() {
       <header className="site-header">
         <div className="container">
           <Link className="brand" href="/">
-            <Crest id="crest-header" />
+            <Crest id="crest-header" label={`${inst.shortName} crest`} src={inst.crestPath} />
             <span className="brand-text">
-              <span className="brand-name">{t('site.name', SITE.name)}</span>
-              <span className="brand-sub">{t('site.dept', SITE.department)}</span>
+              <span className="brand-name">{L.name}</span>
+              <span className="brand-sub">{L.department}</span>
             </span>
           </Link>
 

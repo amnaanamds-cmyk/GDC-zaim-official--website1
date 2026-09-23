@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 /**
- * One-command setup for the GDC Zaim portal.
+ * One-command setup for the college portal.
  *
- *   npm run setup
+ *   npm run setup            prepare an empty database, ready for /setup
+ *   npm run setup -- --demo  also load the demonstration dataset
  *
  * Creates .env if it is missing, creates the PostgreSQL role and database if
- * they do not exist, applies the migrations, and seeds the college content.
+ * they do not exist, and applies the migrations.
+ *
+ * It deliberately does NOT load any content by default. A college setting up
+ * its own copy of this project enters its details in the browser at /setup;
+ * pre-loading the demonstration college's departments and staff would be
+ * both confusing and wrong. Pass --demo when you want the sample data for
+ * development.
  *
  * Safe to run again: it skips whatever is already done, and it will not touch
  * existing data unless you pass --reseed.
@@ -16,6 +23,7 @@ import { stdin, stdout } from 'node:process';
 import pg from 'pg';
 
 const RESEED = process.argv.includes('--reseed');
+const DEMO = process.argv.includes('--demo') || RESEED;
 
 const ESC = '[';
 const c = {
@@ -252,7 +260,7 @@ ok('Tables are up to date');
 /* ------------------------------------------------------------------ *
  * 4. Content
  * ------------------------------------------------------------------ */
-step(4, 'Loading the college content');
+step(4, 'Checking the content');
 
 const client = new pg.Client({
   host: dbHost,
@@ -267,19 +275,22 @@ await client.end();
 
 if (rows[0].n > 0 && !RESEED) {
   ok(`Database already holds ${rows[0].n} accounts — your data has been left alone`);
-  info(`To wipe it and reload the sample content: ${c.bold}npm run setup -- --reseed${c.reset}`);
-} else {
+  info(`To wipe it and load the demonstration data: ${c.bold}npm run setup -- --reseed${c.reset}`);
+} else if (DEMO) {
   if (!run('npm', ['run', 'db:seed'])) {
     fail('Seeding failed — the message above says why.');
     process.exit(1);
   }
-  ok('Content loaded');
+  ok('Demonstration data loaded');
+} else {
+  ok('Database is empty and ready for your college');
 }
 
 /* ------------------------------------------------------------------ *
  * Done
  * ------------------------------------------------------------------ */
-console.log(`
+if (rows[0].n > 0 || DEMO) {
+  console.log(`
 ${c.green}${c.bold}  Setup complete.${c.reset}
 
   Start the site:   ${c.bold}npm run dev${c.reset}
@@ -292,6 +303,20 @@ ${c.green}${c.bold}  Setup complete.${c.reset}
     ${c.bold}librarian${c.reset}           library staff
 
   Signed in as ${c.bold}registrar${c.reset}, ${c.bold}Website content${c.reset} in the left-hand menu is where you
-  change the principal's photograph, the page banners, the gallery and the
-  downloadable documents — no code, no redeploy.
+  change the college profile, the principal's photograph, the page banners,
+  the gallery and the downloadable documents — no code, no redeploy.
 `);
+} else {
+  console.log(`
+${c.green}${c.bold}  Ready.${c.reset}
+
+  Start the site:   ${c.bold}npm run dev${c.reset}
+  Then open:        ${c.bold}http://localhost:3000${c.reset}
+
+  The first page you see is the setup wizard. Enter your college's name,
+  contact details and principal, choose your administrator username and
+  password, and the whole site becomes your college's.
+
+  ${c.dim}Just want the sample data to look around? ${c.bold}npm run setup -- --demo${c.reset}
+`);
+}

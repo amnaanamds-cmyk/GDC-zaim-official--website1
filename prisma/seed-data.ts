@@ -1,12 +1,17 @@
 /*
- * GDC Zaim — seed content
+ * Demonstration content
  * ---------------------------------------------------------
- * The college content that seeds the database. After the first `db:seed` the
- * database is the source of truth and this file is only used to re-seed a
- * fresh environment.
+ * The dataset behind `npm run db:seed`: one college, its departments, staff,
+ * notices and library, used for development and for demonstrating the system.
  *
- * NOTE: names, dates and figures below are realistic placeholders for the
- * college to replace with official records before going live.
+ * A NEW COLLEGE SHOULD NOT LOAD THIS. Setting up a copy of this project is
+ * done through the wizard at /setup, which records that college's own details
+ * and offers neutral starter content from lib/example-content.ts. The people
+ * named below belong to this deployment's college, and presenting them as
+ * another institution's staff would be wrong.
+ *
+ * Names, dates and figures here are realistic placeholders to be replaced
+ * with official records before going live.
  */
 
 const siteConfig = {

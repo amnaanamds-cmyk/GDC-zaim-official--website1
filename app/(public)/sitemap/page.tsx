@@ -1,8 +1,15 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 
-export const metadata: Metadata = { title: 'Sitemap', description: 'All pages on the Government Degree College Zaim website.' };
+export async function generateMetadata(): Promise<Metadata> {
+  const inst = await site();
+  return {
+    title: 'Sitemap',
+    description: `All pages on the ${inst.name} website.`,
+  };
+}
 
 const GROUPS: { heading: string; links: [string, string][] }[] = [
   { heading: 'About', links: [['Home', '/'], ['About the College', '/about'], ["Principal's Message", '/about#principal'], ['Administration', '/about#administration'], ['Campus Facilities', '/facilities']] },

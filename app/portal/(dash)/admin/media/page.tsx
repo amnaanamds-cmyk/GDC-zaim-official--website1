@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Role } from '@prisma/client';
 import { requireRole } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { site } from '@/lib/site';
 import { fmtBytes } from '@/lib/format';
 import PortalShell, { type PortalLink } from '@/components/PortalShell';
 import MediaUploader from '@/components/MediaUploader';
@@ -19,6 +20,7 @@ const LINKS: PortalLink[] = [
 ];
 
 export default async function AdminMediaPage() {
+  const inst = await site();
   const user = await requireRole(Role.ADMIN);
 
   const [events, media] = await Promise.all([
@@ -43,7 +45,7 @@ export default async function AdminMediaPage() {
   const videos = media.filter((m) => m.kind === 'VIDEO').length;
 
   return (
-    <PortalShell user={user} title="Admin Panel" subtitle="GDC Zaim" links={LINKS} heading="Event Media">
+    <PortalShell user={user} title="Admin Panel" subtitle={inst.shortName} links={LINKS} heading="Event Media">
       <div className="kpi-grid">
         <div className="kpi">
           <span className="k-label">Items published</span>

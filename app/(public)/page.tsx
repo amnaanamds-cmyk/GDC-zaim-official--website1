@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 import { publishedNotices, upcomingEvents, siteStats } from '@/lib/queries';
 import { getLocale, translator } from '@/lib/i18n';
 import { fmtShort, dayOf, monthOf } from '@/lib/format';
-import { SITE } from '@/lib/site';
+import { site, localised, taglineOf, principalParagraphs, mailbox } from '@/lib/site';
 import Icon from '@/components/Icon';
 import Reveal from '@/components/Reveal';
 import CountUp from '@/components/CountUp';
@@ -38,6 +38,8 @@ export default async function HomePage() {
       db.galleryItem.findMany({ orderBy: { order: 'asc' }, take: 4 }),
       db.siteImage.findUnique({ where: { slot: 'hero' } }),
     ]);
+  const inst = await site();
+  const L = localised(inst, locale);
 
   const pinned = notices.find((n) => n.pinned);
 
@@ -76,12 +78,9 @@ export default async function HomePage() {
           <div className="hero-grid">
             <div>
               <span className="eyebrow">Government of Khyber Pakhtunkhwa · Higher Education Department</span>
-              <h1>{t('home.hero.title', SITE.name)}</h1>
+              <h1>{L.name}</h1>
               <p className="lead">
-                {t(
-                  'home.hero.lead',
-                  'Knowledge, character and service since 1998. BS programmes in Computer Science and Zoology, intermediate studies in Science, Arts and Computer Science, and a campus built around the students of this district.',
-                )}
+                {L.tagline}
               </p>
               <div className="hero-actions">
                 <Link className="btn btn-accent btn-lg" href="/admissions">
@@ -166,27 +165,19 @@ export default async function HomePage() {
               </div>
               <div style={{ marginTop: '1rem' }}>
                 <strong style={{ display: 'block', fontFamily: 'var(--font-serif)', fontSize: '1.1rem' }}>
-                  {SITE.principal.name}
+                  {inst.principalName}
                 </strong>
                 <span className="text-muted" style={{ fontSize: '.9rem' }}>
-                  {SITE.principal.designation} · Ph.D. Education
+                  {inst.principalDesignation}{inst.principalQualification ? ` · ${inst.principalQualification}` : ''}
                 </span>
               </div>
             </Reveal>
             <Reveal>
               <span className="eyebrow">{t('home.principalTitle', "Principal's Message")}</span>
               <h2>A college that opens doors</h2>
-              <p>
-                Government Degree College Zaim has served this region for more than two decades, opening the
-                doors of higher education to students who might otherwise have been left behind. Our purpose is
-                simple: to combine academic rigour with character, so that every graduate leaves here able to
-                think independently and serve honourably.
-              </p>
-              <p>
-                This portal is part of that commitment — it puts admissions, attendance, results, library
-                services and official notices in one transparent place, accessible to students, parents and
-                faculty alike.
-              </p>
+              {principalParagraphs(inst).slice(0, 2).map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
               <Link className="card-link" href="/about#principal">
                 Read the full message <Icon name="arrow" />
               </Link>
@@ -342,7 +333,7 @@ export default async function HomePage() {
           <div className="split" style={{ marginBottom: '1.5rem' }}>
             <div>
               <span className="eyebrow">Campus</span>
-              <h2 className="mb-0">Life at GDC Zaim</h2>
+              <h2 className="mb-0">Life at {inst.shortName}</h2>
             </div>
             <Link className="btn btn-outline btn-sm" href="/gallery">
               Open gallery
@@ -397,14 +388,14 @@ export default async function HomePage() {
               <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '.6rem 1rem', fontSize: '.93rem', margin: '0 0 1.5rem' }}>
                 <dt style={{ fontWeight: 650 }}>Admissions</dt>
                 <dd style={{ margin: 0 }}>
-                  <a href={`tel:${SITE.admissionsPhone.replace(/\s/g, '')}`}>{SITE.admissionsPhone}</a>
+                  <a href={`tel:${inst.admissionsPhone.replace(/\s/g, '')}`}>{inst.admissionsPhone}</a>
                 </dd>
                 <dt style={{ fontWeight: 650 }}>Examinations</dt>
                 <dd style={{ margin: 0 }}>
-                  <a href="mailto:exams@gdczaim.edu.pk">exams@gdczaim.edu.pk</a>
+                  <a href={`mailto:${mailbox(inst, 'exams')}`}>{mailbox(inst, 'exams')}</a>
                 </dd>
                 <dt style={{ fontWeight: 650 }}>Office hours</dt>
-                <dd style={{ margin: 0 }}>{SITE.officeHours}</dd>
+                <dd style={{ margin: 0 }}>{inst.officeHours}</dd>
               </dl>
               <div className="cluster">
                 <Link className="btn btn-primary btn-sm" href="/contact">

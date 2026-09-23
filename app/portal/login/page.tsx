@@ -3,24 +3,29 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import Crest from '@/components/Crest';
 import { getSessionUser, homeFor } from '@/lib/auth';
-import { SITE } from '@/lib/site';
+import { site } from '@/lib/site';
+import { setupState } from '@/lib/setup';
 import LoginForm from './LoginForm';
 
 export const metadata: Metadata = { title: 'Portal Login' };
 export const dynamic = 'force-dynamic';
 
 export default async function LoginPage() {
+  const { configured } = await setupState();
+  if (!configured) redirect('/setup');
+
   const user = await getSessionUser();
   if (user) redirect(homeFor(user.role));
+  const inst = await site();
 
   return (
     <main id="main" className="login-page">
       <div className="login-card">
         <div className="text-center" style={{ marginBottom: '1.5rem' }}>
-          <Crest id="crest-login" className="" />
+          <Crest id="crest-login" className="" label={`${inst.shortName} crest`} src={inst.crestPath} />
           <h1 style={{ fontSize: '1.4rem', margin: '.9rem 0 .25rem' }}>Portal Login</h1>
           <p className="text-muted" style={{ fontSize: '.9rem', margin: 0 }}>
-            {SITE.name}
+            {inst.name}
           </p>
         </div>
 

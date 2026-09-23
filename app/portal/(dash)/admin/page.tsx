@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Role, MarkStatus } from '@prisma/client';
 import { requireRole } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { site } from '@/lib/site';
 import { ATTENDANCE_THRESHOLD } from '@/lib/grading';
 import { fmtShort } from '@/lib/format';
 import PortalShell, { type PortalLink } from '@/components/PortalShell';
@@ -24,6 +25,7 @@ const LINKS: PortalLink[] = [
 ];
 
 export default async function AdminDashboard() {
+  const inst = await site();
   const user = await requireRole(Role.ADMIN, Role.LIBRARIAN);
 
   const [students, departments, complaints, pendingMarks, notices, activity, attendance, mediaCount] =
@@ -77,7 +79,7 @@ export default async function AdminDashboard() {
     <PortalShell
       user={user}
       title="Admin Panel"
-      subtitle="GDC Zaim"
+      subtitle={inst.shortName}
       links={LINKS}
       heading="Administration Dashboard"
     >

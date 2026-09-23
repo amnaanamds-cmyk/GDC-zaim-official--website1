@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { loginAction, type LoginState } from '@/app/actions/auth';
 
 const ROLES = [
-  { key: 'student', label: 'Student', hint: 'Registration number', example: '2023-GDCZ-CS-045' },
+  { key: 'student', label: 'Student', hint: 'Registration number', example: 'Your registration number' },
   { key: 'teacher', label: 'Teacher', hint: 'Faculty username or email', example: 'bilal.ahmad' },
   { key: 'admin', label: 'Admin', hint: 'Administrator username', example: 'registrar' },
   { key: 'library', label: 'Library', hint: 'Library staff username', example: 'librarian' },

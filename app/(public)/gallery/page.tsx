@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { site } from '@/lib/site';
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import PageHero from '@/components/PageHero';
@@ -6,13 +7,17 @@ import EventMediaGallery, { type MediaItem } from '@/components/EventMediaGaller
 import { getSessionUser } from '@/lib/auth';
 import { Role } from '@prisma/client';
 
-export const metadata: Metadata = {
-  title: 'Photo Gallery',
-  description: 'Photographs of campus life, academic activities, events and sports at Government Degree College Zaim.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const inst = await site();
+  return {
+    title: 'Gallery',
+    description: `Photographs of campus life, academic activities, events and sports at ${inst.name}.`,
+  };
+}
 export const dynamic = 'force-dynamic';
 
 export default async function GalleryPage() {
+  const inst = await site();
   const user = await getSessionUser();
   const [items, media] = await Promise.all([
     db.galleryItem.findMany({ orderBy: { order: 'asc' } }),
@@ -36,7 +41,7 @@ export default async function GalleryPage() {
     <>
       <PageHero
         title="Photo Gallery"
-        lead="Campus life, academic activities, events and sports at Government Degree College Zaim."
+        lead={`Campus life, academic activities, events and sports at ${inst.name}.`}
         crumbs={[{ label: 'Gallery' }]}
       />
 

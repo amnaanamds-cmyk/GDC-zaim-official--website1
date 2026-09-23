@@ -8,6 +8,7 @@ import { getSessionUser, logActivity } from '@/lib/auth';
 import { validateImage, validateDocument, documentLabel } from '@/lib/media';
 import { saveUpload, deleteUpload } from '@/lib/storage';
 import { fmtBytes } from '@/lib/format';
+import { site } from '@/lib/site';
 
 /**
  * Everything on this page is website content that the college administrator
@@ -100,7 +101,7 @@ export async function saveLeader(_prev: ContentState, formData: FormData): Promi
       name: data.name,
       detail: data.detail,
       photoPath,
-      alt: data.alt || `Portrait of ${data.name}, ${data.role} of Government Degree College Zaim.`,
+      alt: data.alt || `Portrait of ${data.name}, ${data.role} of ${(await site()).name}.`,
     },
   });
 
@@ -376,4 +377,76 @@ export async function deleteDownload(id: string): Promise<ContentState> {
   revalidatePath('/downloads');
   revalidatePath('/portal/admin/website');
   return { ok: `Withdrew “${doc.title}”.` };
+}
+
+/* ------------------------------------------------------------------ *
+ * The institution itself
+ * ------------------------------------------------------------------ */
+
+const institutionSchema = z.object({
+  name: z.string().trim().min(4, 'Enter the full name of the college.').max(160),
+  shortName: z.string().trim().min(2, 'Enter a short name.').max(60),
+  nameUr: z.string().trim().max(160),
+  shortNameUr: z.string().trim().max(60),
+  department: z.string().trim().max(120),
+  departmentUr: z.string().trim().max(120),
+  established: z.coerce.number().int().min(1800).max(new Date().getFullYear(), 'The founding year cannot be in the future.'),
+  affiliation: z.string().trim().max(200),
+  district: z.string().trim().min(2, 'Enter the city or district.').max(80),
+  address: z.string().trim().min(6, 'Enter the postal address.').max(240),
+  addressUr: z.string().trim().max(240),
+  phone: z.string().trim().min(6, 'Enter a telephone number.').max(40),
+  admissionsPhone: z.string().trim().max(40),
+  email: z.string().trim().email('Enter a valid college email address.').max(160),
+  admissionsEmail: z.string().trim().email('Enter a valid admissions email address.').max(160),
+  officeHours: z.string().trim().max(120),
+  principalName: z.string().trim().min(3, 'Enter the principal’s name.').max(120),
+  principalDesignation: z.string().trim().max(60),
+  principalQualification: z.string().trim().max(160),
+  principalMessage: z.string().trim().max(6000),
+  tagline: z.string().trim().max(400),
+  taglineUr: z.string().trim().max(400),
+  aboutLead: z.string().trim().max(600),
+  historyBody: z.string().trim().max(6000),
+});
+
+/**
+ * Corrects the college's own details after setup — its name, how to reach it,
+ * who leads it and what the About page says about it.
+ */
+export async function saveInstitution(_prev: ContentState, formData: FormData): Promise<ContentState> {
+  let user;
+  try {
+    user = await requireAdmin();
+  } catch {
+    return DENIED;
+  }
+
+  const parsed = institutionSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Check the form and try again.' };
+  const data = parsed.data;
+
+  const existing = await db.institution.findUnique({ where: { id: 'institution' } });
+  if (!existing) return { error: 'This site has not been set up yet.' };
+
+  let crestPath = existing.crestPath;
+  const crest = fileFrom(formData, 'crest');
+  if (crest) {
+    const stored = await storePhoto(crest, 'institution');
+    if ('error' in stored) return { error: stored.error };
+    crestPath = stored.url;
+  }
+
+  await db.institution.update({ where: { id: 'institution' }, data: { ...data, crestPath } });
+
+  if (crest && existing.crestPath && existing.crestPath !== crestPath) {
+    await deleteUpload(existing.crestPath);
+  }
+
+  await logActivity(user.id, 'UPDATE', 'Institution', 'institution', data.name);
+
+  // The college's name is in the header, the footer and every page title.
+  revalidatePath('/', 'layout');
+
+  return { ok: `Saved. The site now reads “${data.name}”.` };
 }

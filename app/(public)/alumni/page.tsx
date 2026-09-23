@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
+import { site, mailbox } from '@/lib/site';
 import { fmtShort } from '@/lib/format';
 import PageHero from '@/components/PageHero';
 import Icon from '@/components/Icon';
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AlumniPage() {
+  const inst = await site();
   const [alumni, careers] = await Promise.all([
     db.alumnus.findMany({ orderBy: { order: 'asc' } }),
     db.careerOpportunity.findMany({ orderBy: { deadline: 'asc' } }),
@@ -29,7 +31,7 @@ export default async function AlumniPage() {
           <div className="grid" style={{ gridTemplateColumns: '1fr 340px', gap: '3rem', alignItems: 'start' }}>
             <div>
               <span className="eyebrow">Alumni</span>
-              <h2>Graduates of GDC Zaim</h2>
+              <h2>Graduates of {inst.shortName}</h2>
               <p>
                 More than 18,000 students have graduated from this college since 1998. Alumni serve in education,
                 health, public administration, banking, engineering and technology across the province and beyond.
@@ -112,7 +114,7 @@ export default async function AlumniPage() {
                   <br />
                   Mon – Thu, 10:00 – 13:00
                   <br />
-                  <a href="mailto:careers@gdczaim.edu.pk">careers@gdczaim.edu.pk</a>
+                  <a href={`mailto:${mailbox(inst, 'careers')}`}>{mailbox(inst, 'careers')}</a>
                 </p>
               </div>
               <div className="card">

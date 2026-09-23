@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { site } from '@/lib/site';
 import { Role } from '@prisma/client';
 import { db } from '@/lib/db';
 import { getSessionUser } from '@/lib/auth';
@@ -7,10 +8,13 @@ import { fmtDate, fmtShort, dayOf, monthOf } from '@/lib/format';
 import MediaUploader from '@/components/MediaUploader';
 import EventMediaGallery, { type MediaItem } from '@/components/EventMediaGallery';
 
-export const metadata: Metadata = {
-  title: 'Events & Calendar',
-  description: 'Seminars, workshops, competitions, sports and cultural events at Government Degree College Zaim.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const inst = await site();
+  return {
+    title: 'Events',
+    description: `Seminars, workshops, competitions, sports and cultural events at ${inst.name}.`,
+  };
+}
 export const dynamic = 'force-dynamic';
 
 export default async function EventsPage() {

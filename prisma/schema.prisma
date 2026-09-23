@@ -438,6 +438,53 @@ model GalleryItem {
   createdAt DateTime @default(now())
 }
 
+/// The college this deployment belongs to — exactly one row, id "institution".
+///
+/// Everything that names or describes the institution lives here rather than in
+/// the code, so a copy of this repository can be set up for a different college
+/// entirely from the browser, without editing a single file. The first-run
+/// wizard at /setup creates this row; the administrator edits it afterwards.
+model Institution {
+  id String @id @default("institution")
+
+  /* Identity */
+  name         String
+  nameUr       String
+  shortName    String
+  shortNameUr  String
+  department   String @default("Higher Education Department")
+  departmentUr String @default("محکمہ اعلیٰ تعلیم")
+  established  Int
+  affiliation  String
+  crestPath    String?
+
+  /* Where and how to reach it */
+  address         String
+  addressUr       String @default("")
+  district        String
+  phone           String
+  admissionsPhone String
+  email           String
+  admissionsEmail String
+  officeHours     String @default("Monday – Friday, 08:00 – 14:00")
+
+  /* The head of the institution */
+  principalName          String
+  principalDesignation   String @default("Principal")
+  principalQualification String @default("")
+  /// Blank line separated paragraphs; the home page shows the first two.
+  principalMessage       String @default("")
+
+  /* Narrative shown on the home and about pages. Blank-line separated. */
+  tagline     String @default("")
+  taglineUr   String @default("")
+  aboutLead   String @default("")
+  historyBody String @default("")
+
+  setupCompletedAt DateTime?
+  updatedAt        DateTime  @updatedAt
+}
+
 /// A member of the college leadership, shown on the About page.
 /// The administrator edits the details and uploads the portrait — the
 /// principal's photograph included — from Admin -> Website content.

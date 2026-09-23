@@ -1,4 +1,4 @@
-# Government Degree College Zaim — Website & Management Portal
+# College Website & Management Portal
 
 A full-stack college portal: public website plus student, faculty and administration
 dashboards, built as a **Next.js 16 / React 19** application on **PostgreSQL**.
@@ -6,6 +6,12 @@ dashboards, built as a **Next.js 16 / React 19** application on **PostgreSQL**.
 Everything on the site comes from the database. Publishing a notice in the admin panel puts it on the
 home page immediately; a teacher marking attendance changes the student's percentage; an administrator
 uploading event photographs and videos from their computer makes them visible to every visitor.
+
+**No college is hardcoded into this project.** A fresh copy pointed at an empty database belongs to
+nobody: the first person to open it is taken to a setup wizard that records the institution's name,
+contact details, principal and crest, and creates the administrator account. From that moment the
+whole site — header, footer, page titles, email addresses, reference numbers — is that college's.
+See [Setting this up for a college](#setting-this-up-for-a-college).
 
 ---
 
@@ -32,9 +38,9 @@ Then:
 | **Windows** | Double-click **`start.bat`** |
 | **macOS / Linux** | Double-click **`start.command`** (or run `./start.command` in a terminal) |
 
-That installs the dependencies, creates the database, loads the college content and starts the site.
-The first run asks once for the PostgreSQL password you chose at install time; after that it asks nothing.
-When it says `Setup complete`, open **http://localhost:3000**.
+That installs the dependencies, creates the database and starts the site. The first run asks once for
+the PostgreSQL password you chose at install time; after that it asks nothing. When it says `Ready`,
+open **http://localhost:3000** — the setup wizard is waiting to record your college's details.
 
 To start it again later, double-click the same file.
 
@@ -82,7 +88,11 @@ For a production build: `npm run build && npm start`.
 
 ## Demo accounts
 
-Seeded by `npm run db:seed`. **Password for all four: `gdc12345`.**
+These exist only in the **demonstration dataset**, loaded by `npm run db:seed` for development.
+A real college never runs that — it sets itself up through the wizard and chooses its own
+administrator username and password.
+
+**Password for all four: `gdc12345`.**
 
 | Role | Sign in with | Lands on |
 |---|---|---|
@@ -122,20 +132,96 @@ None of this needs a developer, a code change or a redeploy. See
 - Every public page, site-wide search, event photographs and videos
 - Submit an admission application with document upload, a complaint, a certificate request (each returns a tracking reference) and a general enquiry
 
+## Setting this up for a college
+
+Each college gets its own copy of this project, its own database and its own deployment. Nothing is
+shared between them, so one college can never see or change another's records.
+
+### 1. Make a copy of the repository
+
+On GitHub, **Use this template** → **Create a new repository** (or fork it, or download the ZIP and
+push it to a new repository). Give it the new college's name.
+
+### 2. Create a database
+
+Any PostgreSQL will do. [Neon](https://neon.tech) has a free tier that suits a college site:
+create a project, then copy the **pooled** connection string — the host contains `-pooler`.
+
+### 3. Deploy it
+
+On [Vercel](https://vercel.com): **Add New → Project**, import the repository, and before deploying add
+one environment variable:
+
+| Name | Value |
+|---|---|
+| `DATABASE_URL` | the pooled connection string from step 2 |
+
+Tick Production, Preview and Development. Do **not** add `NODE_ENV` — setting it to `development`
+would turn off the `secure` flag on session cookies.
+
+Deploy. The build applies the migrations itself, so the tables are created for you.
+
+### 4. Add Blob storage
+
+Project → **Storage** → **Create Database** → **Blob**, connect it to the project, then **redeploy**.
+Without this, photograph uploads fail: Vercel's filesystem is read-only and is wiped on every deploy.
+
+### 5. Open the site and set it up
+
+The first visit lands on the setup wizard. Fill in:
+
+- the college's name, short name, year founded and affiliation, and upload its crest
+- where it is — city or district, postal address, telephone and email
+- the principal's name and title
+- the administrator account: name, username, email and a password of at least 10 characters
+
+Tick **Add example content** to start with placeholder departments, notices, events and gallery tiles
+so every page has something on it — all clearly marked and easy to delete. Nothing invents students,
+attendance or results.
+
+Press **Create the site** and you are signed in as the administrator, on your own dashboard.
+
+**The wizard then closes permanently.** It is tied to accounts existing, not to a flag, so once the
+administrator account exists nobody can reach `/setup` and appoint themselves — visiting it redirects
+to the sign-in page, and posting to it directly is refused.
+
+### Afterwards
+
+Everything entered during setup can be corrected from **Admin → Website content → College profile**,
+including the crest, the principal's message and the college's history. See
+[Uploading and changing pictures](#uploading-and-changing-pictures).
+
+### Running a copy on your own computer
+
+```bash
+npm install
+npm run setup     # creates the database and tables — and loads nothing
+npm run dev       # open http://localhost:3000 and the wizard is waiting
+```
+
+`npm run setup -- --demo` loads the demonstration dataset instead, if you want to look around a
+populated site before setting up a real one.
+
+### What is stored where
+
+| | Where it lives | Changed by |
+|---|---|---|
+| The college's name, contact details, principal, crest | `Institution` row in the database | the setup wizard, then Admin → Website content |
+| Departments, faculty, notices, events, documents | the database | the admin panel |
+| Photographs and uploaded files | `var/uploads`, or Vercel Blob | the admin panel |
+| Page layout, wording that is the same everywhere | the code | a developer |
+
 ## Uploading and changing pictures
 
 Everything below is done in a web browser. Nothing here requires the code, a terminal or a new deployment.
 
 ### Signing in
 
-Go to **`/portal/login`** and sign in as the administrator:
+Go to **`/portal/login`** and sign in as the administrator — the account created during setup.
 
-| | |
-|---|---|
-| Username | `registrar` |
-| Password | `gdc12345` |
-
-Change that password before the site is used for real — see [Security](#security).
+In the demonstration dataset that account is `registrar`, password `gdc12345`; a college that set
+itself up through the wizard chose its own. Either way, see [Security](#security) before the site is
+used for real.
 
 Only the `ADMIN` role sees these screens. A teacher, a student or a signed-out visitor who types the
 address in is sent away, and the upload endpoints answer `403` even if the request is made by hand.
@@ -195,8 +281,9 @@ its thumbnail, so a video tile has something to show without video tooling on th
 
 ```
 start.bat / start.command   Double-click launchers (setup + run)
-scripts/setup.mjs           One-command setup: database, tables, content
+scripts/setup.mjs           One-command setup: database and tables
 app/
+  setup/               First-run wizard — claims a fresh copy for a college
   (public)/            Public website — home, about, departments, academics, faculty,
                        admissions, scholarships, notices, events, gallery, library,
                        facilities, downloads, student services, alumni, contact, search
@@ -204,19 +291,22 @@ app/
   portal/(dash)/       Protected dashboards: admin, teacher, student
   api/                 Route handlers for file uploads (event media, admission documents)
   uploads/[...path]/   Serves uploaded files — they cannot live under public/
-  actions/             Server actions: auth, admin, teaching, public forms, website content
+  actions/             Server actions: setup, auth, admin, teaching, public forms, website content
 components/            Shared React components (header, nav, uploader, media gallery…)
   admin/               The website-content editor: photo picker, forms, delete buttons
 lib/
   db.ts                Prisma client
   auth.ts              Sessions, password hashing, RBAC helpers
   grading.ts           Grade scale, GPA and attendance rules — the single source of truth
+  site.ts              The institution — read from the database, never hardcoded
+  setup.ts             Whether this copy has been claimed by a college yet
+  example-content.ts   Neutral starter content offered during setup
   search.ts            Site-wide search
   i18n.ts              English / Urdu strings
 prisma/
-  schema.prisma        30 models covering every SRS module
+  schema.prisma        31 models covering every SRS module
   seed.ts              Seeds content and demo accounts
-  seed-data.ts         The college's content
+  seed-data.ts         The demonstration dataset (development only)
 public/images/         Photographs shipped with the site (the fallbacks)
 var/uploads/           Files uploaded from the admin panel (gitignored — runtime data)
 ```
@@ -305,10 +395,15 @@ npm run db:studio    # browse the database in Prisma Studio
 
 ## Content note
 
-The campus photograph in `public/images` is genuine. Names, statistics, notices, contact numbers and the
-remaining gallery tiles are realistic placeholders — replace them in `prisma/seed-data.ts` (or edit
-records through the admin panel) before the site goes live. The privacy and accessibility statements
-should be reviewed and approved by the college administration.
+`prisma/seed-data.ts` holds the **demonstration** dataset — one college, its departments, staff and
+notices, used for development. The names and figures in it are realistic placeholders, and it belongs
+to the deployment it was written for. A new college should never load it: setting up a copy is done
+through the wizard, which records that college's own details and offers neutral starter content from
+`lib/example-content.ts`.
+
+The photographs in `public/images` are fallbacks used until a college uploads its own. The privacy and
+accessibility statements should be reviewed and approved by the college administration before the site
+goes live.
 
 ## Accessibility
 

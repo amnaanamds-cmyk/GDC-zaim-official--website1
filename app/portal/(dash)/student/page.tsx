@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Role, MarkStatus } from '@prisma/client';
 import { requireRole } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { site } from '@/lib/site';
 import { publishedNotices } from '@/lib/queries';
 import { ATTENDANCE_THRESHOLD, totalMarks, gradeFor, gpa } from '@/lib/grading';
 import { fmtShort, dayOf, monthOf } from '@/lib/format';
@@ -20,6 +21,7 @@ const LINKS: PortalLink[] = [
 ];
 
 export default async function StudentDashboard() {
+  const inst = await site();
   const user = await requireRole(Role.STUDENT);
 
   const student = await db.student.findFirst({
@@ -35,7 +37,7 @@ export default async function StudentDashboard() {
 
   if (!student) {
     return (
-      <PortalShell user={user} title="Student Portal" subtitle="GDC Zaim" links={LINKS} heading="Student Dashboard">
+      <PortalShell user={user} title="Student Portal" subtitle={inst.shortName} links={LINKS} heading="Student Dashboard">
         <section className="panel">
           <h2>No student record linked</h2>
           <p className="mb-0 text-muted">
@@ -84,7 +86,7 @@ export default async function StudentDashboard() {
     <PortalShell
       user={user}
       title="Student Portal"
-      subtitle="GDC Zaim"
+      subtitle={inst.shortName}
       links={LINKS}
       heading={`Assalam-o-Alaikum, ${student.name.split(' ')[0]}`}
     >

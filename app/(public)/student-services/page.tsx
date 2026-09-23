@@ -104,7 +104,7 @@ export default function StudentServicesPage() {
                   </div>
                   <div className="field">
                     <label htmlFor="sv-reg">Registration number <span className="req">*</span></label>
-                    <input type="text" id="sv-reg" name="regNo" required placeholder="2023-GDCZ-CS-045" />
+                    <input type="text" id="sv-reg" name="regNo" required placeholder="Your registration number" />
                   </div>
                   <div className="field">
                     <label htmlFor="sv-type">Service required <span className="req">*</span></label>

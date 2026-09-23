@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
-import { SITE } from '@/lib/site';
+import { site, localised, mailbox } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 import Icon from '@/components/Icon';
 import ActionForm from '@/components/ActionForm';
@@ -12,18 +12,24 @@ export const metadata: Metadata = {
 };
 export const dynamic = 'force-dynamic';
 
+/**
+ * The offices a visitor might need. Only the mailbox name is listed — the
+ * domain comes from the institution's own address, so these stay correct for
+ * whichever college this deployment belongs to.
+ */
 const OFFICES = [
-  ['Principal’s Office', 'Institutional matters, official correspondence', 'principal@gdczaim.edu.pk', 'Administration Block, First Floor'],
-  ['Admission Office', 'Admissions, merit lists, enrolment', 'admissions@gdczaim.edu.pk', 'Administration Block, Ground Floor'],
-  ['Examination Office', 'Datesheets, results, rechecking', 'exams@gdczaim.edu.pk', 'Administration Block, Room 5'],
-  ['Registrar / Records', 'Certificates, transcripts, student records', 'registrar@gdczaim.edu.pk', 'Administration Block, Room 3'],
-  ['Accounts Office', 'Fees, challans, dues clearance', 'accounts@gdczaim.edu.pk', 'Administration Block, Room 7'],
-  ['Central Library', 'Membership, borrowing, clearance', 'library@gdczaim.edu.pk', 'Library Building'],
-  ['Scholarship Cell', 'Scholarships and fee concessions', 'scholarships@gdczaim.edu.pk', 'Administration Block, Room 12'],
-  ['IT & Portal Support', 'Portal accounts, password reset', 'itsupport@gdczaim.edu.pk', 'IT Block, Ground Floor'],
+  ['Principal’s Office', 'Institutional matters, official correspondence', 'principal', 'Administration Block, First Floor'],
+  ['Admission Office', 'Admissions, merit lists, enrolment', 'admissions', 'Administration Block, Ground Floor'],
+  ['Examination Office', 'Datesheets, results, rechecking', 'exams', 'Administration Block, Room 5'],
+  ['Registrar / Records', 'Certificates, transcripts, student records', 'registrar', 'Administration Block, Room 3'],
+  ['Accounts Office', 'Fees, challans, dues clearance', 'accounts', 'Administration Block, Room 7'],
+  ['Central Library', 'Membership, borrowing, clearance', 'library', 'Library Building'],
+  ['Scholarship Cell', 'Scholarships and fee concessions', 'scholarships', 'Administration Block, Room 12'],
+  ['IT & Portal Support', 'Portal accounts, password reset', 'itsupport', 'IT Block, Ground Floor'],
 ];
 
 export default async function ContactPage() {
+  const inst = await site();
   const [departments, campus] = await Promise.all([
     db.department.findMany({ orderBy: { order: 'asc' } }),
     db.siteImage.findUnique({ where: { slot: 'hero' } }),
@@ -43,24 +49,24 @@ export default async function ContactPage() {
             <div className="card">
               <span className="card-icon"><Icon name="pin" /></span>
               <h3>Address</h3>
-              <p className="mb-0">{SITE.address}</p>
+              <p className="mb-0">{inst.address}</p>
             </div>
             <div className="card">
               <span className="card-icon"><Icon name="phone" /></span>
               <h3>Telephone</h3>
               <p className="mb-0">
-                Office: <a href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a>
+                Office: <a href={`tel:${inst.phone.replace(/\s/g, '')}`}>{inst.phone}</a>
                 <br />
-                Admissions: <a href={`tel:${SITE.admissionsPhone.replace(/\s/g, '')}`}>{SITE.admissionsPhone}</a>
+                Admissions: <a href={`tel:${inst.admissionsPhone.replace(/\s/g, '')}`}>{inst.admissionsPhone}</a>
               </p>
             </div>
             <div className="card">
               <span className="card-icon"><Icon name="mail" /></span>
               <h3>Email</h3>
               <p className="mb-0">
-                <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+                <a href={`mailto:${inst.email}`}>{inst.email}</a>
                 <br />
-                <a href={`mailto:${SITE.admissionsEmail}`}>{SITE.admissionsEmail}</a>
+                <a href={`mailto:${inst.admissionsEmail}`}>{inst.admissionsEmail}</a>
               </p>
             </div>
             <div className="card">
@@ -94,16 +100,19 @@ export default async function ContactPage() {
                 </tr>
               </thead>
               <tbody>
-                {OFFICES.map(([office, responsible, email, location]) => (
-                  <tr key={office}>
-                    <td>{office}</td>
-                    <td>{responsible}</td>
-                    <td>
-                      <a href={`mailto:${email}`}>{email}</a>
-                    </td>
-                    <td>{location}</td>
-                  </tr>
-                ))}
+                {OFFICES.map(([office, responsible, box, location]) => {
+                  const address = mailbox(inst, box);
+                  return (
+                    <tr key={office}>
+                      <td>{office}</td>
+                      <td>{responsible}</td>
+                      <td>
+                        <a href={`mailto:${address}`}>{address}</a>
+                      </td>
+                      <td>{location}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -237,11 +246,11 @@ export default async function ContactPage() {
               <img
                 src={campus?.imagePath ?? '/images/campus-hero.jpg'}
                 loading="lazy"
-                alt={campus?.alt || 'Government Degree College Zaim seen from the front lawn.'}
+                alt={campus?.alt || `${inst.name} seen from the front lawn.`}
               />
               <figcaption>
-                The main campus on Main Campus Road, Zaim. An interactive map will be embedded here once the
-                official coordinates are confirmed by the administration.
+                {inst.address}. An interactive map will be embedded here once the official coordinates are
+                confirmed by the administration.
               </figcaption>
             </figure>
           </div>

@@ -1,9 +1,15 @@
 /**
- * Seeds a fresh database with the college's content and a working set of
- * demo accounts, students, enrolments, attendance and marks so every screen
- * in the portal has real data to show.
+ * Loads the full demonstration dataset: a college, accounts, students,
+ * enrolments, attendance and marks, so every screen in the portal has
+ * something real to show.
  *
  *   npm run db:seed
+ *
+ * This is for development and for demonstrating the system — NOT the way a
+ * new college starts. A fresh copy of this project should be left with an
+ * empty database and set up through the wizard at /setup, which records that
+ * college's own details and offers neutral starter content. Running this
+ * would fill their site with the demo college's departments and staff.
  *
  * Safe to re-run: it clears the tables it owns first.
  */
@@ -12,6 +18,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
 import {
+  siteConfig,
   departments as deptData,
   faculty as facultyData,
   notices as noticeData,
@@ -54,6 +61,7 @@ async function main() {
   await db.event.deleteMany();
   await db.notice.deleteMany();
   await db.programme.deleteMany();
+  await db.institution.deleteMany();
   await db.faculty.deleteMany();
   await db.complaint.deleteMany();
   await db.department.deleteMany();
@@ -72,6 +80,32 @@ async function main() {
   await db.activityLog.deleteMany();
   await db.session.deleteMany();
   await db.user.deleteMany();
+
+  /* ---------------- The institution ---------------- */
+  // Without this row the site has no name, every page redirects to /setup,
+  // and /setup redirects back to the login page because accounts exist.
+  console.log('Creating the institution…');
+  const institution = await db.institution.create({
+    data: {
+      id: 'institution',
+      name: siteConfig.name,
+      nameUr: siteConfig.nameUr,
+      shortName: siteConfig.shortName,
+      shortNameUr: 'جی ڈی سی زیم',
+      established: siteConfig.established,
+      affiliation: siteConfig.affiliation,
+      district: 'Zaim',
+      address: siteConfig.address,
+      phone: siteConfig.phone,
+      admissionsPhone: siteConfig.admissionsPhone,
+      email: siteConfig.email,
+      admissionsEmail: siteConfig.admissionsEmail,
+      officeHours: siteConfig.officeHours,
+      principalName: 'Prof. Dr. Muhammad Ayub Khan',
+      principalQualification: 'Ph.D. Geography, M.Phil. Geography',
+      setupCompletedAt: new Date(),
+    },
+  });
 
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 12);
 
@@ -431,6 +465,7 @@ async function main() {
     books: await db.book.count(),
     leaders: await db.leader.count(),
   };
+  console.log(`\nInstitution: ${institution.name}`);
   console.log('\nSeeded:', counts);
   console.log(`\nDemo accounts (password: ${DEMO_PASSWORD})`);
   console.log('  admin    registrar');

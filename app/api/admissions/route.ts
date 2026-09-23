@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
+import { site, instCode } from '@/lib/site';
 import { saveUpload, deleteUpload } from '@/lib/storage';
 
 export const runtime = 'nodejs';
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
   // the intermediate component; the office adds the rest at verification.
   const meritScore = Math.round((data.marks / 1100) * 50 * 100) / 100;
 
-  const ref = `GDCZ-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const ref = `${instCode(await site())}-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
   const written: string[] = [];
 
   try {

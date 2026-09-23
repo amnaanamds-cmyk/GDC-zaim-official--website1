@@ -1,12 +1,17 @@
 import type { Metadata } from 'next';
+import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description: 'How Government Degree College Zaim collects, uses, shares, protects and retains personal information.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const inst = await site();
+  return {
+    title: 'Privacy Policy',
+    description: `How ${inst.name} collects, uses, shares, protects and retains personal information.`,
+  };
+}
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const inst = await site();
   return (
     <>
       <PageHero
@@ -72,9 +77,9 @@ export default function PrivacyPage() {
 
           <h2 style={{ marginTop: '2.5rem' }}>Contact</h2>
           <p>
-            Questions about this policy may be sent to <a href="mailto:info@gdczaim.edu.pk">info@gdczaim.edu.pk</a>{' '}
-            or addressed to the Registrar, Government Degree College Zaim, Main Campus Road, Zaim, Khyber
-            Pakhtunkhwa.
+            Questions about this policy may be sent to{' '}
+            <a href={`mailto:${inst.email}`}>{inst.email}</a> or addressed to the Registrar, {inst.name},{' '}
+            {inst.address}.
           </p>
 
           <p className="form-note" style={{ marginTop: '2rem' }}>

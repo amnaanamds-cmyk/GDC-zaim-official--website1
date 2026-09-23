@@ -1,15 +1,19 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { site } from '@/lib/site';
 import { db } from '@/lib/db';
 import { getLocale } from '@/lib/i18n';
 import PageHero from '@/components/PageHero';
 import Icon from '@/components/Icon';
 import type { IconName } from '@/lib/icons';
 
-export const metadata: Metadata = {
-  title: 'Departments',
-  description: 'Nine academic departments offering BS and intermediate programmes at Government Degree College Zaim.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const inst = await site();
+  return {
+    title: 'Departments',
+    description: `Academic departments offering BS and intermediate programmes at ${inst.name}.`,
+  };
+}
 export const dynamic = 'force-dynamic';
 
 export default async function DepartmentsPage() {

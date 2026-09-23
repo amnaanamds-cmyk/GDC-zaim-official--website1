@@ -15,6 +15,13 @@ export async function getLocale(): Promise<Locale> {
 
 type Dict = Record<string, string>;
 
+/**
+ * Urdu for the parts of the interface that are the same at every college:
+ * navigation, headings and labels. Anything that names or describes this
+ * particular institution is stored per-college on the Institution row
+ * (nameUr, shortNameUr, taglineUr…) and read through lib/site.ts instead.
+ */
+
 const ur: Dict = {
   'nav.home': 'صفحۂ اول',
   'nav.about': 'کالج کا تعارف',
@@ -41,16 +48,10 @@ const ur: Dict = {
   'nav.contact': 'رابطہ',
   'nav.portal': 'پورٹل لاگ ان',
   'nav.search': 'تلاش',
-  'site.name': 'گورنمنٹ ڈگری کالج زیم',
-  'site.short': 'جی ڈی سی زیم',
-  'site.dept': 'محکمہ اعلیٰ تعلیم',
   'common.readMore': 'مزید پڑھیں',
   'common.viewAll': 'تمام دیکھیں',
   'common.download': 'ڈاؤن لوڈ',
   'common.quickLinks': 'فوری روابط',
-  'home.hero.title': 'گورنمنٹ ڈگری کالج زیم',
-  'home.hero.lead':
-    'علم، کردار اور خدمت کی روایت — بی ایس کمپیوٹر سائنس اور حیوانیات کے شعبے، ایف ایس سی، ایف اے اور آئی سی ایس، اور ایک ایسا کیمپس جو ہر طالب علم کے لیے کھلا ہے۔',
   'home.noticesTitle': 'تازہ ترین اعلانات',
   'home.eventsTitle': 'آنے والی تقریبات',
   'home.deptTitle': 'شعبہ جات',

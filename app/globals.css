@@ -1069,3 +1069,53 @@ dialog.gdc-dialog.viewer { width: min(100% - 2rem, 940px); }
 @media (max-width: 900px) {
   .admin-doc-split { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ------------------------------------------------------------------ *
+ * First-run setup wizard
+ * ------------------------------------------------------------------ */
+.setup-page {
+  min-height: 100vh;
+  background: var(--surface-2);
+  padding: var(--sp-6) var(--sp-4) var(--sp-8);
+}
+.setup-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-7);
+  box-shadow: var(--shadow-1);
+}
+@media (max-width: 640px) { .setup-card { padding: var(--sp-5); } }
+
+.setup-head { text-align: center; margin-bottom: var(--sp-6); }
+.setup-head h1 { margin: var(--sp-4) 0 var(--sp-2); font-size: var(--step-3); }
+.setup-head .brand-mark,
+.setup-head svg { width: 56px; height: 56px; }
+.setup-head p { max-width: 52ch; margin-inline: auto; }
+
+.setup-step { border: 0; padding: 0; margin: 0 0 var(--sp-7); }
+.setup-step > legend {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--font-serif);
+  font-size: var(--step-1);
+  font-weight: 700;
+  padding: 0 0 var(--sp-4);
+}
+.setup-step-n {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: .9rem;
+}
+.setup-step + .setup-step { border-top: 1px solid var(--line-soft); padding-top: var(--sp-6); }
+
+.setup-foot { text-align: center; margin-top: var(--sp-5); font-size: .9rem; }

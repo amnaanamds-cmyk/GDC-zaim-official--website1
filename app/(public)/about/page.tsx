@@ -1,15 +1,18 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
-import { SITE } from '@/lib/site';
+import { site, aboutLeadOf, historyParagraphs, principalParagraphs, yearsSince } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 import Icon from '@/components/Icon';
 import type { IconName } from '@/lib/icons';
 
-export const metadata: Metadata = {
-  title: 'About the College',
-  description: 'History, vision, mission, principal’s message, administration and affiliation of Government Degree College Zaim.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const inst = await site();
+  return {
+    title: 'About the College',
+    description: `History, vision, mission, principal\u2019s message, administration and affiliation of ${inst.name}.`,
+  };
+}
 export const dynamic = 'force-dynamic';
 
 const STRUCTURE = [
@@ -30,12 +33,13 @@ export default async function AboutPage() {
     db.leader.findMany({ orderBy: { order: 'asc' } }),
     db.siteImage.findUnique({ where: { slot: 'about-campus' } }),
   ]);
+  const inst = await site();
 
   return (
     <>
       <PageHero
         title="About the College"
-        lead="Established in 1998 under the Higher Education Department, Government Degree College Zaim provides affordable, high-quality higher education to students across the district."
+        lead={aboutLeadOf(inst)}
         crumbs={[{ label: 'About the College' }]}
       />
 
@@ -44,20 +48,10 @@ export default async function AboutPage() {
           <div className="grid" style={{ gridTemplateColumns: '1fr 340px', alignItems: 'start', gap: '3rem' }}>
             <div>
               <span className="eyebrow">History</span>
-              <h2>Twenty-seven years of public higher education</h2>
-              <p>
-                Government Degree College Zaim opened its doors in 1998 with two departments and fewer than 300
-                students. It was established to serve a district where families had, until then, sent their
-                children to distant cities for intermediate and degree-level study — an option many could not
-                afford.
-              </p>
-              <p>
-                The college was upgraded to degree-awarding status in 2004 and introduced four-year BS programmes
-                in 2012 following the national shift to the semester system. Today it enrols around 680 students
-                across two degree-awarding departments — Computer Science and Zoology — and intermediate faculties
-                of Science, Arts and Computer Science, with laboratories, a central library and transport
-                facilities developed steadily through provincial development schemes and community support.
-              </p>
+              <h2>{yearsSince(inst)} years of public higher education</h2>
+              {historyParagraphs(inst).map((para: string, i: number) => (
+                <p key={i}>{para}</p>
+              ))}
               <p>
                 The college remains a fully government institution: fee structures are set by the Higher
                 Education Department, admissions are governed by published merit criteria, and financial
@@ -97,7 +91,7 @@ export default async function AboutPage() {
                 <img
                   src={campus?.imagePath ?? '/images/campus-main-block.jpg'}
                   loading="lazy"
-                  alt={campus?.alt || 'The main academic block of Government Degree College Zaim.'}
+                  alt={campus?.alt || `The campus of ${inst.name}.`}
                 />
                 <figcaption>The main academic block and front lawn.</figcaption>
               </figure>
@@ -138,35 +132,15 @@ export default async function AboutPage() {
             </div>
             <div>
               <span className="eyebrow">Principal&rsquo;s Message</span>
-              <h2>{SITE.principal.name}</h2>
+              <h2>{inst.principalName}</h2>
               <p className="text-muted" style={{ marginTop: '-.5rem' }}>
-                {SITE.principal.designation} · {SITE.principal.qualification}
+                {inst.principalDesignation}{inst.principalQualification ? ` · ${inst.principalQualification}` : ''}
               </p>
-              <p>
-                Government Degree College Zaim has served this region for more than two decades, opening the
-                doors of higher education to students who might otherwise have been left behind. Our purpose is
-                simple: to combine academic rigour with character, so that every graduate leaves here able to
-                think independently and serve honourably.
-              </p>
-              <p>
-                Over the past few years we have worked to strengthen the foundations of the college: laboratory
-                equipment has been renewed, the library catalogue has been digitised, and departmental research
-                activity has increased. The introduction of this website and management portal is the next step.
-                It puts admissions, attendance, results, library services and official notices in one transparent
-                place, accessible to students, parents and faculty alike.
-              </p>
-              <p>
-                Transparency matters to us. A merit list published online, an attendance record a student can
-                check the same week, a complaint that can be tracked to resolution — these are small things
-                individually, but together they build the trust a public institution depends on.
-              </p>
-              <p>
-                To our students: make full use of what this college offers. To parents: you are partners in this
-                work, and the portal is open to you as well. To my colleagues: thank you for the commitment that
-                keeps this institution standing.
-              </p>
+              {principalParagraphs(inst).map((para: string, i: number) => (
+                <p key={i}>{para}</p>
+              ))}
               <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontStyle: 'italic', color: 'var(--brand)' }}>
-                — {SITE.principal.name}
+                — {inst.principalName}
               </p>
             </div>
           </div>

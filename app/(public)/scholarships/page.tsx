@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
+import { site, mailbox } from '@/lib/site';
 import { fmtShort } from '@/lib/format';
 import PageHero from '@/components/PageHero';
 
@@ -18,6 +19,7 @@ const CONCESSIONS = [
 ];
 
 export default async function ScholarshipsPage() {
+  const inst = await site();
   const scholarships = await db.scholarship.findMany({ orderBy: { name: 'asc' } });
   const today = new Date();
 
@@ -84,7 +86,7 @@ export default async function ScholarshipsPage() {
               <div className="callout" style={{ marginTop: '1.5rem' }}>
                 <p className="mb-0">
                   <strong>Scholarship Cell:</strong> Administration Block, Room 12 · Mon – Thu, 09:00 – 13:00 ·{' '}
-                  <a href="mailto:scholarships@gdczaim.edu.pk">scholarships@gdczaim.edu.pk</a>
+                  <a href={`mailto:${mailbox(inst, 'scholarships')}`}>{mailbox(inst, 'scholarships')}</a>
                 </p>
               </div>
             </div>

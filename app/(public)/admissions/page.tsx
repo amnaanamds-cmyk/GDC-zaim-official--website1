@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
-import { SITE } from '@/lib/site';
+import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 import ApplicationForm from '@/components/ApplicationForm';
 
@@ -22,13 +22,14 @@ const DOCUMENTS = [
 
 const FAQS = [
   ['Can I apply for more than one programme?', 'Yes. Submit a separate application for each programme you wish to be considered for. Merit is assessed separately for each.'],
-  ['Is there an entry test?', 'An entry test is conducted for BS Computer Science and BS Physics where applications exceed twice the sanctioned seats. The test date is notified on the notice board.'],
+  ['Is there an entry test?', 'An entry test is conducted for programmes where applications exceed twice the sanctioned seats. The test date is notified on the notice board.'],
   ['What if my name does not appear on the merit list?', 'Subsequent merit lists are displayed as seats remain vacant after each enrolment deadline. Keep checking the notice board and this website.'],
   ['Are fee concessions available?', 'Yes. Need-based scholarships, Zakat assistance and merit concessions are available — see the scholarships page.'],
   ['Can I apply if my result is awaited?', 'Applications are accepted provisionally with a result-awaited certificate, but admission is confirmed only after the detailed marks certificate is verified.'],
 ];
 
 export default async function AdmissionsPage() {
+  const inst = await site();
   const [programmes, schedule, applicationCount] = await Promise.all([
     db.programme.findMany({ include: { department: true }, orderBy: { name: 'asc' } }),
     db.admissionStage.findMany({ orderBy: { order: 'asc' } }),
@@ -169,9 +170,9 @@ export default async function AdmissionsPage() {
                   <br />
                   Mon – Fri, 08:30 – 13:30
                   <br />
-                  <a href={`tel:${SITE.admissionsPhone.replace(/\s/g, '')}`}>{SITE.admissionsPhone}</a>
+                  <a href={`tel:${inst.admissionsPhone.replace(/\s/g, '')}`}>{inst.admissionsPhone}</a>
                   <br />
-                  <a href={`mailto:${SITE.admissionsEmail}`}>{SITE.admissionsEmail}</a>
+                  <a href={`mailto:${inst.admissionsEmail}`}>{inst.admissionsEmail}</a>
                 </p>
               </div>
               <div className="card">

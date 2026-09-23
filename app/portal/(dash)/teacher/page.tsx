@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Role, MarkStatus } from '@prisma/client';
 import { requireRole } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { site } from '@/lib/site';
 import { ATTENDANCE_THRESHOLD, totalMarks, gradeFor } from '@/lib/grading';
 import PortalShell, { type PortalLink } from '@/components/PortalShell';
 import AttendanceSheet from './AttendanceSheet';
@@ -22,6 +23,7 @@ export default async function TeacherDashboard({
 }: {
   searchParams: Promise<{ course?: string }>;
 }) {
+  const inst = await site();
   const user = await requireRole(Role.TEACHER, Role.ADMIN);
   const params = await searchParams;
 
@@ -85,7 +87,7 @@ export default async function TeacherDashboard({
   const maxBucket = Math.max(1, ...distribution.values());
 
   return (
-    <PortalShell user={user} title="Faculty Portal" subtitle="GDC Zaim" links={LINKS} heading="Faculty Dashboard">
+    <PortalShell user={user} title="Faculty Portal" subtitle={inst.shortName} links={LINKS} heading="Faculty Dashboard">
       <div className="kpi-grid">
         <div className="kpi">
           <span className="k-label">Assigned courses</span>

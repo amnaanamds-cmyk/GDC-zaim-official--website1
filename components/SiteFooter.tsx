@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Crest from './Crest';
 import Icon from './Icon';
-import { SITE } from '@/lib/site';
+import { site, localised } from '@/lib/site';
 import { getLocale, translator } from '@/lib/i18n';
 
 const SOCIALS = [
@@ -14,6 +14,8 @@ const SOCIALS = [
 export default async function SiteFooter() {
   const locale = await getLocale();
   const t = translator(locale);
+  const inst = await site();
+  const L = localised(inst, locale);
 
   return (
     <footer className="site-footer">
@@ -21,15 +23,14 @@ export default async function SiteFooter() {
         <div className="footer-grid">
           <div>
             <Link className="brand" href="/">
-              <Crest id="crest-footer" />
+              <Crest id="crest-footer" label={`${inst.shortName} crest`} src={inst.crestPath} />
               <span className="brand-text">
-                <span className="brand-name">{t('site.short', SITE.shortName)}</span>
-                <span className="brand-sub">Est. {SITE.established}</span>
+                <span className="brand-name">{L.shortName}</span>
+                <span className="brand-sub">Est. {inst.established}</span>
               </span>
             </Link>
             <p style={{ marginTop: '1rem', fontSize: '.92rem', maxWidth: '34ch' }}>
-              A government degree college committed to accessible, high-quality higher education for the
-              students of Zaim and the surrounding districts.
+              {L.tagline}
             </p>
             <div className="social-row">
               {SOCIALS.map((s) => (
@@ -69,23 +70,19 @@ export default async function SiteFooter() {
             <ul className="footer-contact">
               <li>
                 <Icon name="pin" />
-                <span>
-                  Main Campus Road, Zaim,
-                  <br />
-                  Khyber Pakhtunkhwa, Pakistan
-                </span>
+                <span>{L.address}</span>
               </li>
               <li>
                 <Icon name="phone" />
-                <a href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a>
+                <a href={`tel:${inst.phone.replace(/\s/g, '')}`}>{inst.phone}</a>
               </li>
               <li>
                 <Icon name="mail" />
-                <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+                <a href={`mailto:${inst.email}`}>{inst.email}</a>
               </li>
               <li>
                 <Icon name="clock" />
-                <span>{SITE.officeHours}</span>
+                <span>{inst.officeHours}</span>
               </li>
             </ul>
           </div>
@@ -93,7 +90,7 @@ export default async function SiteFooter() {
 
         <div className="footer-bottom">
           <p style={{ margin: 0 }}>
-            © {new Date().getFullYear()} {SITE.name}. {t('footer.rights', 'All rights reserved.')}
+            © {new Date().getFullYear()} {L.name}. {t('footer.rights', 'All rights reserved.')}
           </p>
           <ul>
             <li><Link href="/sitemap">Sitemap</Link></li>

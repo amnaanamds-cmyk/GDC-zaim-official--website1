@@ -1,6 +1,28 @@
-export default function Crest({ id = 'crest', className = 'brand-mark' }: { id?: string; className?: string }) {
+/**
+ * The institution's emblem.
+ *
+ * A college that has uploaded its own crest gets that image; everyone else
+ * gets the neutral shield below, which carries no college's name or markings
+ * and so is safe as a default for any institution.
+ */
+export default function Crest({
+  id = 'crest',
+  className = 'brand-mark',
+  label = 'College crest',
+  src,
+}: {
+  id?: string;
+  className?: string;
+  label?: string;
+  src?: string | null;
+}) {
+  if (src) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img className={className} src={src} alt={label} width={64} height={64} />;
+  }
+
   return (
-    <svg className={className} viewBox="0 0 64 64" role="img" aria-label="GDC Zaim crest">
+    <svg className={className} viewBox="0 0 64 64" role="img" aria-label={label}>
       <defs>
         <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#157954" />

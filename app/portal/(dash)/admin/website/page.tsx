@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Role } from '@prisma/client';
 import { requireRole } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { site } from '@/lib/site';
 import { fmtShort } from '@/lib/format';
 import { MEDIA_POLICY } from '@/lib/media';
 import { storageBackend } from '@/lib/storage';
@@ -11,6 +12,7 @@ import ContentForm from '@/components/admin/ContentForm';
 import PhotoPicker from '@/components/admin/PhotoPicker';
 import DangerButton from '@/components/admin/DangerButton';
 import {
+  saveInstitution,
   saveLeader,
   removeLeaderPhoto,
   setSiteImage,
@@ -25,6 +27,7 @@ export const dynamic = 'force-dynamic';
 
 const LINKS: PortalLink[] = [
   { label: 'Website content', href: '/portal/admin/website', icon: 'image' },
+  { label: 'College profile', href: '/portal/admin/website#institution', icon: 'shield' },
   { label: 'Dashboard', href: '/portal/admin', icon: 'grid' },
   { label: 'Event media', href: '/portal/admin/media', icon: 'mic' },
   { label: 'Announcements', href: '/portal/admin#notices', icon: 'bell' },
@@ -48,6 +51,7 @@ const DOWNLOAD_CATEGORIES = [
 ];
 
 export default async function WebsiteContentPage() {
+  const inst = await site();
   const user = await requireRole(Role.ADMIN);
 
   const [leaders, images, gallery, documents] = await Promise.all([
@@ -64,7 +68,7 @@ export default async function WebsiteContentPage() {
     <PortalShell
       user={user}
       title="Admin Panel"
-      subtitle="GDC Zaim"
+      subtitle={inst.shortName}
       links={LINKS}
       heading="Website Content"
     >
@@ -103,6 +107,153 @@ export default async function WebsiteContentPage() {
           </span>
         </div>
       </div>
+
+      {/* ---------------- The college itself ---------------- */}
+      <section className="panel" id="institution">
+        <h2>College profile</h2>
+        <p className="text-muted">
+          The name, contact details and description used across the whole site — the header, the
+          footer, every page title and the About page. Changing the name here renames the site.
+        </p>
+
+        <ContentForm action={saveInstitution} submitLabel="Save the college profile">
+          <div className="admin-doc-split">
+            <div>
+              <PhotoPicker
+                name="crest"
+                current={inst.crestPath}
+                alt={`${inst.shortName} crest`}
+                shape="portrait"
+                label="College crest"
+                hint="A square image works best. Leave empty to keep the current one."
+              />
+            </div>
+
+            <div className="stack">
+              <div className="form-grid" style={{ gap: '1rem' }}>
+                <div className="field">
+                  <label htmlFor="i-name">Full name</label>
+                  <input type="text" id="i-name" name="name" defaultValue={inst.name} required />
+                </div>
+                <div className="field">
+                  <label htmlFor="i-short">Short name</label>
+                  <input type="text" id="i-short" name="shortName" defaultValue={inst.shortName} required />
+                </div>
+                <div className="field">
+                  <label htmlFor="i-nameur">Full name in Urdu</label>
+                  <input type="text" id="i-nameur" name="nameUr" dir="rtl" defaultValue={inst.nameUr} />
+                </div>
+                <div className="field">
+                  <label htmlFor="i-shortur">Short name in Urdu</label>
+                  <input type="text" id="i-shortur" name="shortNameUr" dir="rtl" defaultValue={inst.shortNameUr} />
+                </div>
+                <div className="field">
+                  <label htmlFor="i-dept">Governing body</label>
+                  <input type="text" id="i-dept" name="department" defaultValue={inst.department} />
+                </div>
+                <div className="field">
+                  <label htmlFor="i-deptur">Governing body in Urdu</label>
+                  <input type="text" id="i-deptur" name="departmentUr" dir="rtl" defaultValue={inst.departmentUr} />
+                </div>
+                <div className="field">
+                  <label htmlFor="i-est">Year founded</label>
+                  <input type="number" id="i-est" name="established" defaultValue={inst.established} required />
+                </div>
+                <div className="field">
+                  <label htmlFor="i-aff">Affiliation</label>
+                  <input type="text" id="i-aff" name="affiliation" defaultValue={inst.affiliation} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style={{ marginTop: '2rem' }}>Where to find the college</h3>
+          <div className="form-grid" style={{ gap: '1rem' }}>
+            <div className="field">
+              <label htmlFor="i-district">City or district</label>
+              <input type="text" id="i-district" name="district" defaultValue={inst.district} required />
+            </div>
+            <div className="field">
+              <label htmlFor="i-hours">Office hours</label>
+              <input type="text" id="i-hours" name="officeHours" defaultValue={inst.officeHours} />
+            </div>
+            <div className="field">
+              <label htmlFor="i-addr">Postal address</label>
+              <input type="text" id="i-addr" name="address" defaultValue={inst.address} required />
+            </div>
+            <div className="field">
+              <label htmlFor="i-addrur">Postal address in Urdu</label>
+              <input type="text" id="i-addrur" name="addressUr" dir="rtl" defaultValue={inst.addressUr} />
+            </div>
+            <div className="field">
+              <label htmlFor="i-phone">Telephone</label>
+              <input type="tel" id="i-phone" name="phone" defaultValue={inst.phone} required />
+            </div>
+            <div className="field">
+              <label htmlFor="i-aphone">Admissions telephone</label>
+              <input type="tel" id="i-aphone" name="admissionsPhone" defaultValue={inst.admissionsPhone} />
+            </div>
+            <div className="field">
+              <label htmlFor="i-email">College email</label>
+              <input type="email" id="i-email" name="email" defaultValue={inst.email} required />
+              <span className="hint">
+                Office addresses such as <code>library@</code> come from this domain.
+              </span>
+            </div>
+            <div className="field">
+              <label htmlFor="i-aemail">Admissions email</label>
+              <input type="email" id="i-aemail" name="admissionsEmail" defaultValue={inst.admissionsEmail} />
+            </div>
+          </div>
+
+          <h3 style={{ marginTop: '2rem' }}>The principal</h3>
+          <div className="form-grid" style={{ gap: '1rem' }}>
+            <div className="field">
+              <label htmlFor="i-pname">Name</label>
+              <input type="text" id="i-pname" name="principalName" defaultValue={inst.principalName} required />
+            </div>
+            <div className="field">
+              <label htmlFor="i-pdes">Title</label>
+              <input type="text" id="i-pdes" name="principalDesignation" defaultValue={inst.principalDesignation} />
+            </div>
+            <div className="field">
+              <label htmlFor="i-pqual">Qualifications</label>
+              <input type="text" id="i-pqual" name="principalQualification" defaultValue={inst.principalQualification} />
+            </div>
+          </div>
+          <div className="field">
+            <label htmlFor="i-pmsg">Principal&rsquo;s message</label>
+            <textarea id="i-pmsg" name="principalMessage" rows={7} defaultValue={inst.principalMessage} />
+            <span className="hint">
+              Leave a blank line between paragraphs. The first two appear on the home page and all of
+              them on the About page. Leave it empty for a short generated welcome.
+            </span>
+          </div>
+
+          <h3 style={{ marginTop: '2rem' }}>How the college describes itself</h3>
+          <div className="field">
+            <label htmlFor="i-tag">One-line description</label>
+            <textarea id="i-tag" name="tagline" rows={2} defaultValue={inst.tagline} />
+            <span className="hint">Shown under the college name on the home page and in the footer.</span>
+          </div>
+          <div className="field">
+            <label htmlFor="i-tagur">One-line description in Urdu</label>
+            <textarea id="i-tagur" name="taglineUr" rows={2} dir="rtl" defaultValue={inst.taglineUr} />
+          </div>
+          <div className="field">
+            <label htmlFor="i-lead">About page introduction</label>
+            <textarea id="i-lead" name="aboutLead" rows={3} defaultValue={inst.aboutLead} />
+          </div>
+          <div className="field">
+            <label htmlFor="i-hist">History</label>
+            <textarea id="i-hist" name="historyBody" rows={8} defaultValue={inst.historyBody} />
+            <span className="hint">
+              Leave a blank line between paragraphs. Empty means a short paragraph written from the
+              founding year and district.
+            </span>
+          </div>
+        </ContentForm>
+      </section>
 
       {/* ---------------- Leadership ---------------- */}
       <section className="panel" id="leadership">

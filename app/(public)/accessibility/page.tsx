@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { site, mailbox } from '@/lib/site';
 import type { Metadata } from 'next';
 import PageHero from '@/components/PageHero';
 
@@ -7,7 +8,8 @@ export const metadata: Metadata = {
   description: 'How this website supports keyboard navigation, screen readers, contrast, reduced motion and Urdu language support.',
 };
 
-export default function AccessibilityPage() {
+export default async function AccessibilityPage() {
+  const inst = await site();
   return (
     <>
       <PageHero
@@ -40,7 +42,7 @@ export default function AccessibilityPage() {
           <h2 style={{ marginTop: '2.5rem' }}>Reporting a problem</h2>
           <p>
             If any part of this website is difficult to use, please tell us. Write to{' '}
-            <a href="mailto:itsupport@gdczaim.edu.pk">itsupport@gdczaim.edu.pk</a> or use the{' '}
+            <a href={`mailto:${mailbox(inst, 'itsupport')}`}>{mailbox(inst, 'itsupport')}</a> or use the{' '}
             <Link href="/contact#complaint">complaints and feedback form</Link>, describing the page and what
             happened. We aim to respond within five working days.
           </p>

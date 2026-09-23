@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { site, mailbox } from '@/lib/site';
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
 import PageHero from '@/components/PageHero';
@@ -15,6 +16,7 @@ export default async function LibraryPage({
 }: {
   searchParams: Promise<{ q?: string; category?: string }>;
 }) {
+  const inst = await site();
   const { q, category } = await searchParams;
 
   const where: Record<string, unknown> = {};
@@ -171,7 +173,7 @@ export default async function LibraryPage({
                 <p className="mb-0" style={{ fontSize: '.92rem' }}>
                   Mr. Naveed Anjum, MLIS
                   <br />
-                  <a href="mailto:library@gdczaim.edu.pk">library@gdczaim.edu.pk</a>
+                  <a href={`mailto:${mailbox(inst, 'library')}`}>{mailbox(inst, 'library')}</a>
                 </p>
               </div>
             </aside>

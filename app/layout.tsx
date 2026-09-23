@@ -1,23 +1,31 @@
 import type { Metadata, Viewport } from 'next';
 import { getLocale } from '@/lib/i18n';
-import { SITE } from '@/lib/site';
+import { site } from '@/lib/site';
 import './globals.css';
 
-export const metadata: Metadata = {
-  title: {
-    default: `${SITE.name}`,
-    template: `%s | ${SITE.name}`,
-  },
-  description:
-    'Official website and management portal of Government Degree College Zaim — admissions, departments, notices, results, library and student services.',
-  icons: {
+/**
+ * Resolved per request rather than at build time: the college's name lives in
+ * the database, so the same build serves whichever institution set itself up.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const inst = await site();
+  return {
+    title: {
+      default: inst.name,
+      template: `%s | ${inst.name}`,
+    },
+    description: `Official website and management portal of ${inst.name} — admissions, departments, notices, results, library and student services.`,
+    icons: ICONS,
+  };
+}
+
+const ICONS: Metadata['icons'] = {
     icon: [
       {
         url:
           "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 57 12v22c0 14-11 24-25 27C18 58 7 48 7 34V12L32 3Z' fill='%230a3b2a' stroke='%23c8a24a' stroke-width='3'/%3E%3Cpath d='M20 40V27l12-7 12 7v13' fill='none' stroke='%23c8a24a' stroke-width='3'/%3E%3C/svg%3E",
       },
     ],
-  },
 };
 
 export const viewport: Viewport = {
