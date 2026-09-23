@@ -62,11 +62,12 @@ export default async function HomePage() {
       )}
 
       {/* ---------------- Hero ---------------- */}
-      {/* The banner is whatever the administrator last uploaded; the stylesheet
-          falls back to the photograph shipped with the site if the slot is empty.
+      {/* The banner is whatever this college uploaded. A college that has not
+          uploaded one yet gets the plain crested gradient — never a photograph
+          of somewhere else, which is what a shipped fallback would amount to.
           The path must be root-absolute, which every stored upload URL is. */}
       <section
-        className="hero hero--photo"
+        className={`hero${heroImage ? ' hero--photo' : ''}`}
         style={
           heroImage
             ? ({ '--hero-photo': `url("${heroImage.imagePath}")` } as React.CSSProperties)

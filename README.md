@@ -401,7 +401,10 @@ to the deployment it was written for. A new college should never load it: settin
 through the wizard, which records that college's own details and offers neutral starter content from
 `lib/example-content.ts`.
 
-The photographs in `public/images` are fallbacks used until a college uploads its own. The privacy and
+The photographs in `public/images` belong to the college this deployment was built for, and are used
+only because its database points at them. They are never a fallback: a college that has not uploaded a
+banner gets a plain crested gradient, and its About and Contact pages show an empty frame, because
+showing one institution's campus on another's site would misrepresent both. The privacy and
 accessibility statements should be reviewed and approved by the college administration before the site
 goes live.
 

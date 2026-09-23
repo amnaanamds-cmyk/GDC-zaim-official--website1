@@ -375,14 +375,17 @@ html[lang='ur'] .brand-sub { letter-spacing: normal; text-transform: none; }
 }
 /* Campus photograph behind the hero. The overlay below keeps the white text
    above the 4.5:1 contrast ratio regardless of what the photo is doing.
-   The administrator replaces this photograph from Admin -> Website content, so
-   the page sets --hero-photo inline and this rule falls back to the one that
-   ships with the site. The inline value must be a root-absolute path or a full
-   URL: a url() written relative would resolve against the document, not here. */
+   The page adds this class only when the college has uploaded a banner, and
+   sets --hero-photo inline. There is deliberately no shipped fallback image:
+   a photograph bundled with the code would be some particular campus, and
+   showing it on another college's site would misrepresent them. Without a
+   banner the plain .hero gradient is used instead. The inline value must be a
+   root-absolute path or a full URL: a url() written relative would resolve
+   against the document, not against this stylesheet. */
 .hero--photo {
   background-image:
     linear-gradient(100deg, rgba(5,37,26,.93) 0%, rgba(8,50,36,.82) 42%, rgba(5,37,26,.62) 100%),
-    var(--hero-photo, url('/images/campus-hero.jpg'));
+    var(--hero-photo);
   background-size: cover, cover;
   background-position: center, center 32%;
   background-repeat: no-repeat, no-repeat;
@@ -401,7 +404,7 @@ html[lang='ur'] .brand-sub { letter-spacing: normal; text-transform: none; }
   .hero--photo {
     background-image:
       linear-gradient(180deg, rgba(5,37,26,.9) 0%, rgba(8,50,36,.84) 55%, rgba(5,37,26,.92) 100%),
-      var(--hero-photo, url('/images/campus-hero.jpg'));
+      var(--hero-photo);
   }
 }
 .hero::after {
@@ -1119,3 +1122,12 @@ dialog.gdc-dialog.viewer { width: min(100% - 2rem, 940px); }
 .setup-step + .setup-step { border-top: 1px solid var(--line-soft); padding-top: var(--sp-6); }
 
 .setup-foot { text-align: center; margin-top: var(--sp-5); font-size: .9rem; }
+
+/* A figure standing in for a photograph the college has not uploaded yet. It
+   holds the same space as a real one so the page does not reflow later. */
+.photo--empty .ph {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+}

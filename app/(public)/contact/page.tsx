@@ -241,13 +241,13 @@ export default async function ContactPage() {
                 <li><strong>By car:</strong> visitor parking is available inside the main gate.</li>
               </ul>
             </div>
-            <figure className="photo">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={campus?.imagePath ?? '/images/campus-hero.jpg'}
-                loading="lazy"
-                alt={campus?.alt || `${inst.name} seen from the front lawn.`}
-              />
+            <figure className={`photo${campus ? '' : ' photo--empty'}`}>
+              {campus ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={campus.imagePath} loading="lazy" alt={campus.alt || `${inst.name}.`} />
+              ) : (
+                <span className="ph ph-b" aria-hidden="true" />
+              )}
               <figcaption>
                 {inst.address}. An interactive map will be embedded here once the official coordinates are
                 confirmed by the administration.

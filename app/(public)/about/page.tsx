@@ -86,15 +86,20 @@ export default async function AboutPage() {
             </div>
 
             <aside className="stack">
-              <figure className="photo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={campus?.imagePath ?? '/images/campus-main-block.jpg'}
-                  loading="lazy"
-                  alt={campus?.alt || `The campus of ${inst.name}.`}
-                />
-                <figcaption>The main academic block and front lawn.</figcaption>
-              </figure>
+              {campus ? (
+                <figure className="photo">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={campus.imagePath} loading="lazy" alt={campus.alt || `The campus of ${inst.name}.`} />
+                  <figcaption>The campus of {inst.shortName}.</figcaption>
+                </figure>
+              ) : (
+                <figure className="photo photo--empty">
+                  <span className="ph ph-a" aria-hidden="true" />
+                  <figcaption>
+                    A photograph of the campus appears here once the administration uploads one.
+                  </figcaption>
+                </figure>
+              )}
 
               <div className="card">
                 <h3>At a glance</h3>
