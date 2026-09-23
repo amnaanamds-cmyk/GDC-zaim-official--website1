@@ -36,13 +36,15 @@ export default function ApplicationForm({ programmes }: { programmes: { id: stri
           <input type="text" id="ap-name" name="name" required minLength={3} autoComplete="name" />
         </div>
         <div className="field">
-          <label htmlFor="ap-father">Father&rsquo;s name <span className="req">*</span></label>
-          <input type="text" id="ap-father" name="fatherName" required minLength={3} />
+          <label htmlFor="ap-father">Parent or guardian&rsquo;s name <span className="req">*</span></label>
+          <input type="text" id="ap-father" name="guardianName" required minLength={3} />
         </div>
         <div className="field">
-          <label htmlFor="ap-cnic">CNIC / B-Form <span className="req">*</span></label>
-          <input type="text" id="ap-cnic" name="cnic" required placeholder="00000-0000000-0" pattern="[0-9]{5}-[0-9]{7}-[0-9]" />
-          <span className="hint">Format: 00000-0000000-0</span>
+          <label htmlFor="ap-id">Identity document number <span className="req">*</span></label>
+          <input type="text" id="ap-id" name="idNumber" required minLength={5} maxLength={40} />
+          <span className="hint">
+            Your national identity card, birth registration or passport number.
+          </span>
         </div>
         <div className="field">
           <label htmlFor="ap-dob">Date of birth <span className="req">*</span></label>
@@ -66,9 +68,14 @@ export default function ApplicationForm({ programmes }: { programmes: { id: stri
           </select>
         </div>
         <div className="field">
-          <label htmlFor="ap-marks">Intermediate marks obtained <span className="req">*</span></label>
-          <input type="number" id="ap-marks" name="marks" required min={0} max={1100} placeholder="e.g. 780" />
-          <span className="hint">Out of 1100.</span>
+          <label htmlFor="ap-marks">Marks obtained <span className="req">*</span></label>
+          <input type="number" id="ap-marks" name="marks" required min={0} step="any" />
+          <span className="hint">In your most recent qualifying examination.</span>
+        </div>
+        <div className="field">
+          <label htmlFor="ap-total">Out of <span className="req">*</span></label>
+          <input type="number" id="ap-total" name="totalMarks" required min={1} step="any" defaultValue={100} />
+          <span className="hint">The total that examination was marked out of.</span>
         </div>
         <div className="field field--full">
           <label htmlFor="ap-address">Postal address <span className="req">*</span></label>
@@ -78,7 +85,8 @@ export default function ApplicationForm({ programmes }: { programmes: { id: stri
           <label htmlFor="ap-docs">Upload documents</label>
           <input type="file" id="ap-docs" name="documents" multiple accept=".pdf,.jpg,.jpeg,.png" />
           <span className="hint">
-            PDF, JPG or PNG, up to 2 MB each. Attach the marks certificates, CNIC/B-Form and a photograph.
+            PDF, JPG or PNG, up to 2 MB each. Attach the marks certificates, your identity document and a
+            photograph.
           </span>
         </div>
       </div>

@@ -78,7 +78,7 @@ export default async function ScholarshipsPage() {
               <h2>How to apply</h2>
               <ol className="stack" style={{ paddingInlineStart: '1.3rem' }}>
                 <li>Download the application form for the relevant scheme from the Downloads section.</li>
-                <li>Attach the guardian&rsquo;s income certificate, the previous result card and a copy of the CNIC/B-Form.</li>
+                <li>Attach the guardian&rsquo;s income certificate, the previous result card and a copy of the applicant&rsquo;s identity document.</li>
                 <li>Submit the completed file to the Scholarship Cell before the notified deadline.</li>
                 <li>Attend the verification interview if called by the scrutiny committee.</li>
                 <li>Selected candidates are notified on the notice board and through the student portal.</li>

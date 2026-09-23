@@ -5,16 +5,19 @@ import { site } from '@/lib/site';
 import PageHero from '@/components/PageHero';
 import ApplicationForm from '@/components/ApplicationForm';
 
-export const metadata: Metadata = {
-  title: 'Admissions 2026',
-  description: 'Admission schedule, eligibility criteria, merit calculation, required documents and the online application form.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: `Admissions ${new Date().getFullYear()}`,
+    description:
+      'Admission schedule, eligibility criteria, merit calculation, required documents and the online application form.',
+  };
+}
 export const dynamic = 'force-dynamic';
 
 const DOCUMENTS = [
-  'Matriculation & Intermediate detailed marks certificates (attested)',
+  'Attested detailed marks certificates for every qualifying examination',
   'Character certificate from the last institution attended',
-  'Two attested copies of CNIC / B-Form and the guardian’s CNIC',
+  'Two attested copies of the candidate’s and the guardian’s identity documents',
   'Four recent passport-size photographs',
   'Domicile certificate',
   'Migration certificate, where applicable',
@@ -36,24 +39,29 @@ export default async function AdmissionsPage() {
     db.application.count(),
   ]);
 
+  // Whatever stage the college's own admission cycle is at.
+  const currentStage = schedule.find((st) => st.status === 'Open') ?? schedule[0] ?? null;
+
   return (
     <>
       <PageHero
-        title="Admissions 2026"
-        lead="Admission to all programmes is strictly on merit, calculated from academic record according to the weighting notified by the Higher Education Department."
+        title={`Admissions ${new Date().getFullYear()}`}
+        lead={`Admission to all programmes is strictly on merit, calculated from academic record according to the weighting notified${inst.department ? ` by the ${inst.department}` : ''}.`}
         crumbs={[{ label: 'Admissions' }]}
       />
 
       <section className="section section--tight">
         <div className="container">
-          <div className="callout callout--accent">
-            <h3>Current status — second merit list displayed</h3>
-            <p className="mb-0">
-              Candidates on the second merit list must deposit dues and complete enrolment at the Admission
-              Office by <strong>22 September 2026</strong>. Seats not confirmed by the deadline will be offered
-              to candidates on the next list. <Link href="/downloads">Download the merit list</Link>.
-            </p>
-          </div>
+          {currentStage && (
+            <div className="callout callout--accent">
+              <h3>Current status — {currentStage.stage.toLowerCase()}</h3>
+              <p className="mb-0">
+                {currentStage.dates}. Merit lists and enrolment deadlines are published on the{' '}
+                <Link href="/notices?category=Admission">notice board</Link> and under{' '}
+                <Link href="/downloads">downloads</Link>.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -64,7 +72,7 @@ export default async function AdmissionsPage() {
               <h2>How to apply</h2>
               <ol className="stack" style={{ paddingInlineStart: '1.3rem' }}>
                 <li><strong>Check eligibility.</strong> Confirm that you meet the minimum marks and subject requirements listed below.</li>
-                <li><strong>Prepare your documents.</strong> Scan or photograph the marks certificates, CNIC/B-Form and a photograph.</li>
+                <li><strong>Prepare your documents.</strong> Scan or photograph the marks certificates, your identity document and a photograph.</li>
                 <li><strong>Complete the online form.</strong> Fill in the application below and upload the documents.</li>
                 <li><strong>Keep your reference number.</strong> It is issued the moment the application is submitted.</li>
                 <li><strong>Watch for the merit list.</strong> Lists are published on the notice board and on this website.</li>
@@ -106,11 +114,11 @@ export default async function AdmissionsPage() {
               <div className="grid grid-3">
                 <div className="card text-center">
                   <span className="stat-value" style={{ color: 'var(--brand)', fontSize: 'var(--step-3)' }}>50%</span>
-                  <p className="mb-0" style={{ marginTop: '.5rem' }}>Intermediate / FSc marks</p>
+                  <p className="mb-0" style={{ marginTop: '.5rem' }}>Most recent qualifying examination</p>
                 </div>
                 <div className="card text-center">
                   <span className="stat-value" style={{ color: 'var(--brand)', fontSize: 'var(--step-3)' }}>30%</span>
-                  <p className="mb-0" style={{ marginTop: '.5rem' }}>Matriculation marks</p>
+                  <p className="mb-0" style={{ marginTop: '.5rem' }}>Previous qualifying examination</p>
                 </div>
                 <div className="card text-center">
                   <span className="stat-value" style={{ color: 'var(--brand)', fontSize: 'var(--step-3)' }}>20%</span>
@@ -135,7 +143,7 @@ export default async function AdmissionsPage() {
 
               <h2 style={{ marginTop: '2.5rem' }} id="apply">Online application</h2>
               <p>
-                Submit your application for the 2026 session. On submission you receive a reference number that
+                Submit your application for the {new Date().getFullYear()} session. On submission you receive a reference number that
                 identifies your application at every stage of processing.
               </p>
               <div className="card">
@@ -160,7 +168,7 @@ export default async function AdmissionsPage() {
                 <p className="mb-0" style={{ fontSize: '.92rem' }}>
                   <strong style={{ fontSize: '1.6rem', fontFamily: 'var(--font-serif)' }}>{applicationCount}</strong>
                   <br />
-                  online applications recorded for the 2026 session so far.
+                  online applications recorded for the {new Date().getFullYear()} session so far.
                 </p>
               </div>
               <div className="card">

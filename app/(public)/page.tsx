@@ -13,7 +13,7 @@ import type { IconName } from '@/lib/icons';
 export const dynamic = 'force-dynamic';
 
 const QUICK_LINKS: { label: string; icon: IconName; href: string }[] = [
-  { label: 'Admissions 2026', icon: 'clipboard', href: '/admissions' },
+  { label: `Admissions ${new Date().getFullYear()}`, icon: 'clipboard', href: '/admissions' },
   { label: 'Examinations & Results', icon: 'chart', href: '/academics#examinations' },
   { label: 'Digital Library', icon: 'book', href: '/library' },
   { label: 'Prospectus & Forms', icon: 'download', href: '/downloads' },
@@ -41,6 +41,7 @@ export default async function HomePage() {
   const inst = await site();
   const L = localised(inst, locale);
 
+  const currentStage = schedule.find((s) => s.status === 'Open') ?? schedule[0] ?? null;
   const pinned = notices.find((n) => n.pinned);
 
   return (
@@ -78,22 +79,26 @@ export default async function HomePage() {
         <div className="container">
           <div className="hero-grid">
             <div>
-              <span className="eyebrow">Government of Khyber Pakhtunkhwa · Higher Education Department</span>
+              {L.department && <span className="eyebrow">{L.department}</span>}
               <h1>{L.name}</h1>
               <p className="lead">
                 {L.tagline}
               </p>
               <div className="hero-actions">
                 <Link className="btn btn-accent btn-lg" href="/admissions">
-                  Admissions 2026
+                  Admissions {new Date().getFullYear()}
                 </Link>
                 <Link className="btn btn-on-dark btn-lg" href="/portal/login">
                   Student &amp; Faculty Portal
                 </Link>
               </div>
-              <p style={{ marginTop: '1.75rem', color: '#a9c4b8', fontSize: '.9rem' }}>
-                Second merit list displayed · Enrolment closes 22 September 2026
-              </p>
+              {/* Whatever stage the admission cycle is actually at, from the
+                  schedule the administration maintains — never a fixed date. */}
+              {currentStage && (
+                <p style={{ marginTop: '1.75rem', color: '#a9c4b8', fontSize: '.9rem' }}>
+                  {currentStage.stage} · {currentStage.dates}
+                </p>
+              )}
             </div>
 
             <aside className="hero-card" aria-labelledby="hero-notices-title">
@@ -263,8 +268,9 @@ export default async function HomePage() {
             <span className="eyebrow">Academics</span>
             <h2>{t('home.deptTitle', 'Our Departments')}</h2>
             <p>
-              Two departments deliver four-year BS programmes in Computer Science and Zoology, alongside FSc,
-              FA and ICS at intermediate level, supported by dedicated laboratories and a central library.
+              {departments.length > 0
+                ? `${departments.length} department${departments.length === 1 ? '' : 's'} deliver the programmes below, supported by the college's laboratories and library.`
+                : 'Departments appear here once the administration adds them.'}
             </p>
           </div>
           <div className="grid grid-3">
@@ -295,10 +301,10 @@ export default async function HomePage() {
           <div className="grid" style={{ gridTemplateColumns: '1.3fr 1fr', alignItems: 'center' }}>
             <div>
               <span className="eyebrow">{t('home.admissionsTitle', 'Admissions Open')}</span>
-              <h2>Applications for the 2026 session</h2>
+              <h2>Applications for the {new Date().getFullYear()} session</h2>
               <p style={{ color: '#cfe0d8', maxWidth: '58ch' }}>
-                Admission to all BS four-year programmes, ICS and I.Com is open. Apply online, upload your
-                documents and track your application through every stage.
+                Admission is open. Apply online, upload your documents and track your application through
+                every stage.
               </p>
               <div className="cluster" style={{ marginTop: '1.5rem' }}>
                 <Link className="btn btn-accent" href="/admissions">
@@ -363,7 +369,7 @@ export default async function HomePage() {
               <span className="eyebrow">Facilities</span>
               <h2>Everything a campus needs</h2>
               <p className="text-muted">
-                From science laboratories and a 28,000-volume library to hostel accommodation, transport and
+                From science laboratories and the central library to accommodation, transport and
                 sports facilities.
               </p>
               <div className="grid grid-2" style={{ gap: '.75rem' }}>

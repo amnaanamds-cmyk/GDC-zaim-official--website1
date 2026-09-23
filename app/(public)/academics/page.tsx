@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
+import { fmtShort } from '@/lib/format';
 import { GRADE_SCALE, ATTENDANCE_THRESHOLD } from '@/lib/grading';
 import PageHero from '@/components/PageHero';
 
@@ -18,16 +19,15 @@ const RULES = [
   ['Result rectification', 'An application for rechecking may be submitted to the Controller of Examinations within 15 days of the result announcement, together with the prescribed fee.'],
 ];
 
-const EXAM_CALENDAR = [
-  ['Submission of sessional marks', '29 Sep – 03 Oct 2026', 'Upcoming'],
-  ['Mid-term examinations', '06 – 17 Oct 2026', 'Upcoming'],
-  ['Display of mid-term awards', '27 Oct 2026', 'Scheduled'],
-  ['Practical examinations', '12 – 20 Jan 2027', 'Scheduled'],
-  ['Final examinations', '26 Jan – 10 Feb 2027', 'Scheduled'],
-  ['Result notification', '10 Mar 2027', 'Scheduled'],
-];
 
 export default async function AcademicsPage({ searchParams }: { searchParams: Promise<{ level?: string; department?: string }> }) {
+  // The calendar is whatever the college has scheduled — an examination or
+  // academic event it entered — rather than a list of dates fixed in the code.
+  const examEvents = await db.event.findMany({
+    where: { category: { in: ['Examination', 'Academic'] }, date: { gte: new Date() } },
+    orderBy: { date: 'asc' },
+    take: 8,
+  });
   const { level, department } = await searchParams;
 
   const [programmes, departments, courses] = await Promise.all([
@@ -60,7 +60,7 @@ export default async function AcademicsPage({ searchParams }: { searchParams: Pr
             <span className="eyebrow">Academics</span>
             <h2>Degree &amp; Intermediate Programmes</h2>
             <p>
-              Seats shown are the sanctioned intake for the 2026 session; the fee is the semester tuition charge
+              Seats shown are the sanctioned intake for the current session; the fee is the semester tuition charge
               notified by the Higher Education Department.
             </p>
           </div>
@@ -194,24 +194,32 @@ export default async function AcademicsPage({ searchParams }: { searchParams: Pr
 
           <div className="grid" style={{ gridTemplateColumns: '1.2fr 1fr', gap: '3rem', alignItems: 'start' }}>
             <div>
-              <h3>Examination calendar — Fall 2026</h3>
-              <div className="table-wrap">
-                <table className="data" style={{ minWidth: 'auto' }}>
-                  <caption className="visually-hidden">Examination calendar</caption>
-                  <thead>
-                    <tr><th scope="col">Activity</th><th scope="col">Dates</th><th scope="col">Status</th></tr>
-                  </thead>
-                  <tbody>
-                    {EXAM_CALENDAR.map(([activity, dates, status]) => (
-                      <tr key={activity}>
-                        <td>{activity}</td>
-                        <td>{dates}</td>
-                        <td><span className={`badge ${status === 'Upcoming' ? 'badge-warning' : ''}`}>{status}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <h3>Examination calendar</h3>
+              {examEvents.length > 0 ? (
+                <div className="table-wrap">
+                  <table className="data" style={{ minWidth: 'auto' }}>
+                    <caption className="visually-hidden">Examination calendar</caption>
+                    <thead>
+                      <tr><th scope="col">Activity</th><th scope="col">Date</th><th scope="col">Venue</th></tr>
+                    </thead>
+                    <tbody>
+                      {examEvents.map((e) => (
+                        <tr key={e.id}>
+                          <td>{e.title}</td>
+                          <td>{fmtShort(e.date)}</td>
+                          <td>{e.venue}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="form-note">
+                  Examination dates are published on the{' '}
+                  <Link href="/notices?category=Examination">notice board</Link> as each schedule is
+                  approved.
+                </p>
+              )}
 
               <h3 style={{ marginTop: '2rem' }}>Examination rules</h3>
               <ul className="stack" style={{ paddingInlineStart: '1.2rem' }}>

@@ -386,15 +386,20 @@ model Application {
   id          String            @id @default(cuid())
   ref         String            @unique
   name        String
-  fatherName  String
-  cnic        String
+  /// Parent or guardian. Not every country records a father's name.
+  guardianName String
+  /// National identity or birth-registration number, in whatever form the
+  /// applicant's country issues it — never validated against one format.
+  idNumber    String
   dob         DateTime          @db.Date
   phone       String
   email       String?
   programmeId String
   programme   Programme         @relation(fields: [programmeId], references: [id], onDelete: Cascade)
   marks       Int
-  totalMarks  Int               @default(1100)
+  /// The total the marks are out of, as stated by the applicant, because
+  /// qualifying examinations are not marked out of the same number everywhere.
+  totalMarks  Int               @default(100)
   address     String
   meritScore  Float?
   status      ApplicationStatus @default(SUBMITTED)

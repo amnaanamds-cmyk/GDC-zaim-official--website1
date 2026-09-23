@@ -19,7 +19,7 @@ const departments = [
   {
     slug: 'computer-science',
     name: 'Computer Science',
-    nameUr: 'کمپیوٹر سائنس',
+    nameUr: 'Computer Science',
     icon: 'cpu',
     intro:
       'Replace this with a short description of the department — what it teaches, how long it has been running and what its laboratories offer.',
@@ -31,7 +31,7 @@ const departments = [
   {
     slug: 'general-science',
     name: 'General Science',
-    nameUr: 'جنرل سائنس',
+    nameUr: 'General Science',
     icon: 'flask',
     intro:
       'Replace this with a short description of the department. You can add, rename or remove departments from the admin panel at any time.',
@@ -56,7 +56,7 @@ const facilities = [
   { name: 'Computer Laboratory', icon: 'cpu', detail: 'Describe the computer laboratory and its equipment.' },
   { name: 'Sports Ground', icon: 'trophy', detail: 'Describe the sports facilities and the games played here.' },
   { name: 'Transport', icon: 'bus', detail: 'Describe the college transport routes, if any.' },
-  { name: 'Masjid & Prayer Area', icon: 'mosque', detail: 'Describe the prayer facilities on campus.' },
+  { name: 'Prayer Room', icon: 'mosque', detail: 'Describe the prayer facilities on campus.' },
 ];
 
 const gallery = [
@@ -128,7 +128,7 @@ function exampleEvents(inst: Institution) {
     {
       slug: 'annual-sports-gala',
       title: 'Annual Sports Gala',
-      summary: 'Inter-departmental athletics, cricket and football, followed by the prize distribution.',
+      summary: 'Inter-departmental athletics and team sports, followed by the prize distribution.',
       date: inDays(60),
       time: '08:00 – 16:00',
       venue: 'Sports Ground',
@@ -168,22 +168,22 @@ export async function installExampleContent(db: PrismaClient, inst: Institution)
   await db.programme.createMany({
     data: [
       {
-        code: 'BS-CS',
-        name: 'BS Computer Science',
+        code: 'PROG-1',
+        name: 'Bachelor of Computer Science',
         level: 'Undergraduate',
-        duration: '4 years (8 semesters)',
+        duration: 'Set the length of this programme',
         seats: 50,
-        eligibility: 'Intermediate with Mathematics, at least 45% marks',
+        eligibility: 'Set the entry requirements for this programme',
         fee: 'Set the fee for this programme',
         departmentId: createdDepartments[0].id,
       },
       {
-        code: 'FSC-PRE-ENG',
-        name: 'FSc Pre-Engineering',
-        level: 'Intermediate',
-        duration: '2 years',
+        code: 'PROG-2',
+        name: 'Certificate in General Science',
+        level: 'Pre-degree',
+        duration: 'Set the length of this programme',
         seats: 80,
-        eligibility: 'Matriculation in Science, at least 50% marks',
+        eligibility: 'Set the entry requirements for this programme',
         fee: 'Set the fee for this programme',
         departmentId: createdDepartments[1].id,
       },

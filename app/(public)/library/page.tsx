@@ -52,17 +52,13 @@ export default async function LibraryPage({
     <>
       <PageHero
         title="Central Library"
-        lead="More than 28,000 volumes, a 120-seat reading hall and a searchable catalogue. Every enrolled student is a member from the day of admission."
+        lead="A searchable catalogue and a reading hall. Every enrolled student is a member from the day of admission."
         crumbs={[{ label: 'Library' }]}
       />
 
       <section className="section section--tight">
         <div className="container">
           <div className="grid grid-4">
-            <div className="card text-center">
-              <span className="stat-value" style={{ color: 'var(--brand)', fontSize: 'var(--step-3)' }}>28,400</span>
-              <p className="mb-0" style={{ marginTop: '.4rem' }}>Volumes catalogued</p>
-            </div>
             <div className="card text-center">
               <span className="stat-value" style={{ color: 'var(--brand)', fontSize: 'var(--step-3)' }}>{totalCopies}</span>
               <p className="mb-0" style={{ marginTop: '.4rem' }}>Copies in this catalogue</p>
@@ -163,7 +159,7 @@ export default async function LibraryPage({
                 <h3>Borrowing rules</h3>
                 <ul className="stack" style={{ paddingInlineStart: '1.1rem', fontSize: '.9rem', margin: 0 }}>
                   <li>Three books at a time for 14 days, renewable once if not reserved.</li>
-                  <li>Overdue fine of PKR 5 per day per book.</li>
+                  <li>An overdue fine is charged per day per book, at the rate notified by the library.</li>
                   <li>Reference books and periodicals are for reading-hall use only.</li>
                   <li>Library clearance is required before transcripts are issued.</li>
                 </ul>

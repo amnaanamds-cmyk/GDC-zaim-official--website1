@@ -202,6 +202,22 @@ npm run dev       # open http://localhost:3000 and the wizard is waiting
 `npm run setup -- --demo` loads the demonstration dataset instead, if you want to look around a
 populated site before setting up a real one.
 
+### What is and is not portable
+
+The identity, contact details, principal, crest, departments, programmes,
+notices, events, documents and photographs are all per-college data — nothing
+about them is written into the code.
+
+Two things are the same in every copy and would need a code change:
+
+- **Urdu is the second language.** The interface switches between English and
+  Urdu with right-to-left layout. A college that wants a different second
+  language edits `lib/i18n.ts`; one that wants English only can leave the Urdu
+  fields empty, and the toggle then shows English either way.
+- **The grading rules.** `lib/grading.ts` holds the grade scale, the GPA points
+  and the 75% attendance requirement, applied on the server so a browser cannot
+  set a grade. A college with different rules edits that one file.
+
 ### What is stored where
 
 | | Where it lives | Changed by |

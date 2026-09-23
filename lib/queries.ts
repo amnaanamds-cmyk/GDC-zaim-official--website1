@@ -1,5 +1,6 @@
 import 'server-only';
 import { db } from './db';
+import { getInstitution } from './site';
 
 /** Notices that are published and not expired, newest first. */
 export function publishedNotices(take?: number, where: Record<string, unknown> = {}) {
@@ -29,15 +30,17 @@ export function upcomingEvents(take?: number) {
 
 /** Headline figures for the home page, counted from the database. */
 export async function siteStats() {
-  const [students, faculty, departments] = await Promise.all([
+  const [students, faculty, departments, inst] = await Promise.all([
     db.student.count(),
     db.faculty.count(),
     db.department.count(),
+    getInstitution(),
   ]);
+  const established = inst?.established ?? new Date().getFullYear();
   return [
     { value: students, suffix: '', label: 'Enrolled Students', labelUr: 'زیرِ تعلیم طلبہ' },
     { value: faculty, suffix: '', label: 'Faculty Members', labelUr: 'اساتذہ' },
     { value: departments, suffix: '', label: 'Academic Departments', labelUr: 'شعبہ جات' },
-    { value: new Date().getFullYear() - 1998, suffix: '', label: 'Years of Service', labelUr: 'سالہ خدمات' },
+    { value: Math.max(0, new Date().getFullYear() - established), suffix: '', label: 'Years of Service', labelUr: 'سالہ خدمات' },
   ];
 }

@@ -10,17 +10,6 @@ export const metadata: Metadata = {
 };
 export const dynamic = 'force-dynamic';
 
-const LABS = [
-  ['Computer Laboratory I & II', 'IT Block, Ground Floor', '80 workstations', 'Programming, database and networking practicals'],
-  ['Project & Research Lab', 'IT Block, First Floor', '40 workstations', 'Final-year projects and research work'],
-  ['Zoology Laboratory', 'Science Block', '40 students', 'Microscopy, dissection and specimen study'],
-  ['Zoology Museum', 'Science Block', 'Reference collection', 'Specimen reference for BS Zoology and FSc Biology'],
-  ['Chemistry Laboratory', 'Science Block', '45 students', 'Practical work for FSc Pre-Medical and Pre-Engineering'],
-  ['Physics Laboratory', 'Science Block', '45 students', 'Practical work for FSc Pre-Engineering'],
-  ['Central Library', 'Library Building', '120 readers', 'Reading hall, reference section, digital catalogue'],
-  ['Auditorium', 'Administration Block', '500 seats', 'Seminars, ceremonies and cultural events'],
-  ['Lecture Halls', 'Academic Blocks A – C', '24 rooms', 'Regular theory classes'],
-];
 
 const ROUTES = [
   ['Route 1', 'Town Centre – Bus Stand – College', '07:15'],
@@ -68,24 +57,28 @@ export default async function FacilitiesPage() {
             <span className="eyebrow">Infrastructure</span>
             <h2>Laboratories &amp; teaching space</h2>
           </div>
-          <div className="table-wrap">
-            <table className="data">
-              <caption className="visually-hidden">Laboratory and teaching space inventory</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Facility</th><th scope="col">Location</th>
-                  <th scope="col">Capacity</th><th scope="col">Primary use</th>
-                </tr>
-              </thead>
-              <tbody>
-                {LABS.map(([name, location, capacity, use]) => (
-                  <tr key={name}>
-                    <td>{name}</td><td>{location}</td><td>{capacity}</td><td>{use}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {facilities.length > 0 ? (
+            <div className="table-wrap">
+              <table className="data">
+                <caption className="visually-hidden">Facilities on campus</caption>
+                <thead>
+                  <tr><th scope="col">Facility</th><th scope="col">Details</th></tr>
+                </thead>
+                <tbody>
+                  {facilities.map((f) => (
+                    <tr key={f.id}>
+                      <td><strong>{f.name}</strong></td>
+                      <td>{f.detail}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="form-note">
+              The administration has not listed the campus facilities yet.
+            </p>
+          )}
         </div>
       </section>
 

@@ -33,8 +33,8 @@ export default async function AlumniPage() {
               <span className="eyebrow">Alumni</span>
               <h2>Graduates of {inst.shortName}</h2>
               <p>
-                More than 18,000 students have graduated from this college since 1998. Alumni serve in education,
-                health, public administration, banking, engineering and technology across the province and beyond.
+                Graduates of {inst.shortName} serve in education, health, public administration, banking,
+                engineering and technology{inst.district ? ` in ${inst.district} and beyond` : ''}.
               </p>
               <div className="grid grid-2" style={{ marginTop: '1.5rem' }}>
                 {alumni.map((a) => (

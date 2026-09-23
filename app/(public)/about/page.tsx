@@ -104,23 +104,29 @@ export default async function AboutPage() {
               <div className="card">
                 <h3>At a glance</h3>
                 <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '.55rem 1rem', fontSize: '.92rem', margin: 0 }}>
-                  <dt className="text-muted">Established</dt><dd style={{ margin: 0, fontWeight: 650 }}>1998</dd>
-                  <dt className="text-muted">Sector</dt><dd style={{ margin: 0, fontWeight: 650 }}>Government</dd>
-                  <dt className="text-muted">Affiliation</dt><dd style={{ margin: 0, fontWeight: 650 }}>University of Peshawar</dd>
+                  <dt className="text-muted">Established</dt><dd style={{ margin: 0, fontWeight: 650 }}>{inst.established}</dd>
+                  {inst.affiliation && (
+                    <>
+                      <dt className="text-muted">Affiliation</dt>
+                      <dd style={{ margin: 0, fontWeight: 650 }}>{inst.affiliation}</dd>
+                    </>
+                  )}
                   <dt className="text-muted">Departments</dt><dd style={{ margin: 0, fontWeight: 650 }}>{departments}</dd>
                   <dt className="text-muted">Programmes</dt><dd style={{ margin: 0, fontWeight: 650 }}>{programmes}</dd>
                   <dt className="text-muted">Students</dt><dd style={{ margin: 0, fontWeight: 650 }}>{students.toLocaleString('en-US')}</dd>
                   <dt className="text-muted">Faculty</dt><dd style={{ margin: 0, fontWeight: 650 }}>{faculty}</dd>
-                  <dt className="text-muted">Campus</dt><dd style={{ margin: 0, fontWeight: 650 }}>24 acres</dd>
                 </dl>
               </div>
 
               <div className="card">
                 <h3>Affiliation &amp; accreditation</h3>
                 <p style={{ fontSize: '.92rem' }}>
-                  All degree programmes are affiliated with the University of Peshawar, which conducts final
-                  examinations and awards degrees. The college is recognised by the Higher Education Department,
-                  Government of Khyber Pakhtunkhwa.
+                  {inst.affiliation
+                    ? `${inst.affiliation}. `
+                    : 'Affiliation details are published in the college prospectus. '}
+                  {inst.department
+                    ? `The college is recognised by the ${inst.department}.`
+                    : ''}
                 </p>
                 <Link className="card-link" href="/downloads">Policy documents &amp; charters</Link>
               </div>
@@ -158,8 +164,8 @@ export default async function AboutPage() {
             <span className="eyebrow">Governance</span>
             <h2>Administration &amp; Organisational Structure</h2>
             <p>
-              The college operates under the Higher Education Department, Government of Khyber Pakhtunkhwa.
-              Academic matters are coordinated by departmental heads under the Principal and Vice Principal.
+              {inst.department ? `The college operates under the ${inst.department}. ` : ''}
+              Academic matters are coordinated by departmental heads under the {inst.principalDesignation}.
             </p>
           </div>
 

@@ -75,13 +75,13 @@ export default function SetupForm({ year }: { year: number }) {
 
         <div className="field">
           <label htmlFor="district">City or district</label>
-          <input type="text" id="district" name="district" required placeholder="Zaim" />
+          <input type="text" id="district" name="district" required placeholder="The city or district you serve" />
           <span className="hint">Used in sentences such as “students of … and the surrounding districts”.</span>
         </div>
 
         <div className="field">
           <label htmlFor="address">Postal address</label>
-          <input type="text" id="address" name="address" required placeholder="Main Campus Road, …, Pakistan" />
+          <input type="text" id="address" name="address" required placeholder="Street, city, region, country" />
         </div>
 
         <div className="form-grid" style={{ gap: '1rem' }}>

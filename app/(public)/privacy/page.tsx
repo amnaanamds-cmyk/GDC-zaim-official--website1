@@ -23,7 +23,7 @@ export default async function PrivacyPage() {
         <div className="container-narrow">
           <h2>Information we collect</h2>
           <ul className="stack" style={{ paddingInlineStart: '1.2rem' }}>
-            <li><strong>Admission applications:</strong> name, parentage, CNIC or B-Form number, date of birth, contact details, academic records and uploaded supporting documents.</li>
+            <li><strong>Admission applications:</strong> name, parentage, identity document number, date of birth, contact details, academic records and uploaded supporting documents.</li>
             <li><strong>Enrolled students:</strong> registration number, programme and semester, attendance, assessment marks, fee and library records.</li>
             <li><strong>Faculty and staff:</strong> employment identifier, designation, department, assigned courses and official contact details.</li>
             <li><strong>Enquiries and complaints:</strong> the details you provide, including contact information where you choose to supply it.</li>

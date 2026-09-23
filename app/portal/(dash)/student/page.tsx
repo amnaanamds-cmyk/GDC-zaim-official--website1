@@ -134,7 +134,7 @@ export default async function StudentDashboard() {
           <span className="k-label">Dues</span>
           <span className="k-value">{student.duesCleared ? 'Cleared' : 'Pending'}</span>
           <span className="k-trend" style={{ color: student.duesCleared ? 'var(--success)' : 'var(--danger)' }}>
-            {student.duesCleared ? 'Fall 2026 fee received' : 'Fee outstanding'}
+            {student.duesCleared ? 'Fee received' : 'Fee outstanding'}
           </span>
         </div>
       </div>

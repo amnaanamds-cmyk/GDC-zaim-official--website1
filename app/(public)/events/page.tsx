@@ -30,6 +30,10 @@ export default async function EventsPage() {
   ]);
 
   const upcoming = events.filter((e) => e.date >= today);
+
+  // The academic calendar card lists what is actually scheduled next, so it is
+  // right for any college and never goes stale.
+  const calendar = events.filter((e) => e.date >= today).slice(0, 6);
   const past = events.filter((e) => e.date < today).reverse();
 
   const mediaItems: MediaItem[] = media.map((m) => ({
@@ -171,28 +175,20 @@ export default async function EventsPage() {
             </div>
             <div className="card">
               <h3>Academic calendar</h3>
-              <ul className="timeline">
-                <li className="is-done">
-                  <span className="t-stage">Fall semester classes begin</span>
-                  <span className="t-date">01 October 2026</span>
-                </li>
-                <li className="is-current">
-                  <span className="t-stage">Mid-term examinations</span>
-                  <span className="t-date">06 – 17 October 2026</span>
-                </li>
-                <li>
-                  <span className="t-stage">Annual Sports Week</span>
-                  <span className="t-date">20 – 26 October 2026</span>
-                </li>
-                <li>
-                  <span className="t-stage">Final examinations</span>
-                  <span className="t-date">26 January – 10 February 2027</span>
-                </li>
-                <li>
-                  <span className="t-stage">Result notification</span>
-                  <span className="t-date">10 March 2027</span>
-                </li>
-              </ul>
+              {calendar.length > 0 ? (
+                <ul className="timeline">
+                  {calendar.map((e, i) => (
+                    <li key={e.id} className={i === 0 ? 'is-current' : undefined}>
+                      <span className="t-stage">{e.title}</span>
+                      <span className="t-date">{fmtDate(e.date)}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="form-note mb-0">
+                  Dates appear here as the administration schedules them.
+                </p>
+              )}
             </div>
           </div>
         </div>

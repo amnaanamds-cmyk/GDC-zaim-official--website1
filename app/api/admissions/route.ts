@@ -11,13 +11,21 @@ const MAX_DOCS = 6;
 
 const schema = z.object({
   name: z.string().trim().min(3).max(120),
-  fatherName: z.string().trim().min(3).max(120),
-  cnic: z.string().trim().regex(/^\d{5}-\d{7}-\d$/, 'CNIC must look like 00000-0000000-0'),
+  guardianName: z.string().trim().min(3).max(120),
+  // Identity documents differ by country, so this checks only that something
+  // plausible was entered — never that it matches one nation's format.
+  idNumber: z
+    .string()
+    .trim()
+    .min(5, 'Enter your identity document number.')
+    .max(40)
+    .regex(/^[A-Za-z0-9][A-Za-z0-9 \-\/]*$/, 'Use letters, numbers, spaces, hyphens or slashes only.'),
   dob: z.string().min(4),
   phone: z.string().trim().min(7).max(40),
   email: z.union([z.email(), z.literal('')]).optional(),
   programmeId: z.string().trim().min(1, 'Choose a programme'),
-  marks: z.coerce.number().min(0).max(1100),
+  marks: z.coerce.number().min(0).max(100_000),
+  totalMarks: z.coerce.number().min(1).max(100_000),
   address: z.string().trim().min(10).max(500),
 });
 
@@ -33,13 +41,14 @@ export async function POST(request: Request) {
 
   const parsed = schema.safeParse({
     name: form.get('name'),
-    fatherName: form.get('fatherName'),
-    cnic: form.get('cnic'),
+    guardianName: form.get('guardianName'),
+    idNumber: form.get('idNumber'),
     dob: form.get('dob'),
     phone: form.get('phone'),
     email: form.get('email') ?? '',
     programmeId: form.get('programmeId'),
     marks: form.get('marks'),
+    totalMarks: form.get('totalMarks') ?? 100,
     address: form.get('address'),
   });
 
@@ -67,7 +76,9 @@ export async function POST(request: Request) {
   // Merit weighting published on this page: 50% intermediate, 30% matric, 20% test.
   // Only the intermediate marks are collected online, so the score recorded is
   // the intermediate component; the office adds the rest at verification.
-  const meritScore = Math.round((data.marks / 1100) * 50 * 100) / 100;
+  // Merit is a percentage of whatever total the qualification was marked out
+  // of, so the scale of the examination does not change the ranking.
+  const meritScore = Math.round((data.marks / data.totalMarks) * 50 * 100) / 100;
 
   const ref = `${instCode(await site())}-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
   const written: string[] = [];
@@ -77,8 +88,9 @@ export async function POST(request: Request) {
       data: {
         ref,
         name: data.name,
-        fatherName: data.fatherName,
-        cnic: data.cnic,
+        guardianName: data.guardianName,
+        idNumber: data.idNumber,
+        totalMarks: data.totalMarks,
         dob: new Date(`${data.dob}T00:00:00.000Z`),
         phone: data.phone,
         email: data.email || null,
