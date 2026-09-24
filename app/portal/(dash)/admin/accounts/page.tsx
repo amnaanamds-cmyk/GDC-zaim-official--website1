@@ -5,19 +5,12 @@ import { requireRole } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { site } from '@/lib/site';
 import { fmtShort } from '@/lib/format';
-import PortalShell, { type PortalLink } from '@/components/PortalShell';
+import { adminNav } from '@/lib/admin-nav';
+import PortalShell from '@/components/PortalShell';
 import { CreateAccountForm, ResetPasswordForm, AccountToggles } from './AccountControls';
 
 export const metadata: Metadata = { title: 'Accounts' };
 export const dynamic = 'force-dynamic';
-
-const LINKS: PortalLink[] = [
-  { label: 'Accounts', href: '/portal/admin/accounts', icon: 'users' },
-  { label: 'Dashboard', href: '/portal/admin', icon: 'grid' },
-  { label: 'Website content', href: '/portal/admin/website', icon: 'image' },
-  { label: 'Event media', href: '/portal/admin/media', icon: 'mic' },
-  { label: 'Announcements', href: '/portal/admin#notices', icon: 'bell' },
-];
 
 const ROLE_LABEL: Record<Role, string> = {
   ADMIN: 'Administrator',
@@ -43,7 +36,7 @@ export default async function AccountsPage() {
   const pending = users.filter((u) => u.mustChangePassword).length;
 
   return (
-    <PortalShell user={admin} title="Admin Panel" subtitle={inst.shortName} links={LINKS} heading="Accounts">
+    <PortalShell user={admin} title="Admin Panel" subtitle={inst.shortName} links={adminNav('/portal/admin/accounts')} heading="Accounts">
       <p className="lead" style={{ marginTop: 0 }}>
         Every login at {inst.shortName} is created here. Nobody outside the college can make an account,
         and nobody — including you — can see another person&rsquo;s password once they have chosen it.

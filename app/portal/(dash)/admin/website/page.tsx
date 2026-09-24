@@ -7,7 +7,8 @@ import { site } from '@/lib/site';
 import { fmtShort } from '@/lib/format';
 import { MEDIA_POLICY } from '@/lib/media';
 import { storageBackend } from '@/lib/storage';
-import PortalShell, { type PortalLink } from '@/components/PortalShell';
+import { adminNav } from '@/lib/admin-nav';
+import PortalShell from '@/components/PortalShell';
 import ContentForm from '@/components/admin/ContentForm';
 import PhotoPicker from '@/components/admin/PhotoPicker';
 import DangerButton from '@/components/admin/DangerButton';
@@ -24,16 +25,6 @@ import {
 
 export const metadata: Metadata = { title: 'Website Content' };
 export const dynamic = 'force-dynamic';
-
-const LINKS: PortalLink[] = [
-  { label: 'Website content', href: '/portal/admin/website', icon: 'image' },
-  { label: 'College profile', href: '/portal/admin/website#institution', icon: 'shield' },
-  { label: 'Dashboard', href: '/portal/admin', icon: 'grid' },
-  { label: 'Accounts', href: '/portal/admin/accounts', icon: 'users' },
-  { label: 'Event media', href: '/portal/admin/media', icon: 'mic' },
-  { label: 'Announcements', href: '/portal/admin#notices', icon: 'bell' },
-  { label: 'Results verification', href: '/portal/admin#results', icon: 'chart' },
-];
 
 /** Where each banner appears, so the administrator knows what they are changing. */
 const SLOT_HELP: Record<string, { label: string; where: string }> = {
@@ -70,7 +61,7 @@ export default async function WebsiteContentPage() {
       user={user}
       title="Admin Panel"
       subtitle={inst.shortName}
-      links={LINKS}
+      links={adminNav('/portal/admin/website')}
       heading="Website Content"
     >
       <p className="lead" style={{ marginTop: 0 }}>

@@ -4,21 +4,13 @@ import { requireRole } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { site } from '@/lib/site';
 import { fmtBytes } from '@/lib/format';
-import PortalShell, { type PortalLink } from '@/components/PortalShell';
+import { adminNav } from '@/lib/admin-nav';
+import PortalShell from '@/components/PortalShell';
 import MediaUploader from '@/components/MediaUploader';
 import EventMediaGallery, { type MediaItem } from '@/components/EventMediaGallery';
 
 export const metadata: Metadata = { title: 'Event Media' };
 export const dynamic = 'force-dynamic';
-
-const LINKS: PortalLink[] = [
-  { label: 'Event media', href: '/portal/admin/media', icon: 'mic' },
-  { label: 'Dashboard', href: '/portal/admin', icon: 'grid' },
-  { label: 'Accounts', href: '/portal/admin/accounts', icon: 'users' },
-  { label: 'Website content', href: '/portal/admin/website', icon: 'image' },
-  { label: 'Notices', href: '/portal/admin#notices', icon: 'bell' },
-  { label: 'Results verification', href: '/portal/admin#results', icon: 'chart' },
-];
 
 export default async function AdminMediaPage() {
   const inst = await site();
@@ -46,7 +38,7 @@ export default async function AdminMediaPage() {
   const videos = media.filter((m) => m.kind === 'VIDEO').length;
 
   return (
-    <PortalShell user={user} title="Admin Panel" subtitle={inst.shortName} links={LINKS} heading="Event Media">
+    <PortalShell user={user} title="Admin Panel" subtitle={inst.shortName} links={adminNav('/portal/admin/media')} heading="Event Media">
       <div className="kpi-grid">
         <div className="kpi">
           <span className="k-label">Items published</span>

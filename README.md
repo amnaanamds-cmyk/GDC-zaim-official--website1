@@ -213,6 +213,30 @@ marked the attendance on record.
 first account exists, so if your only administrator account is lost there is no
 way back in.
 
+### 7. Enter the college's own data
+
+The admin panel is where the college becomes itself. In this order:
+
+| Screen | What goes in |
+|---|---|
+| **Academics** | Departments, then programmes, then courses |
+| **People & enrolment** | Faculty and student records, then which students take which courses |
+| **Campus & content** | Events, admission schedule, facilities, scholarships, library catalogue, alumni, careers |
+| **Website content** | College profile, principal's photograph, page banners, gallery, documents |
+| **Accounts** | Logins for the people who need the portal |
+
+Order matters at the top: a programme needs a department, a course needs both,
+and a student needs a programme.
+
+**Enrolment is the step people forget.** A teacher's register is the students
+enrolled on their course, and a student's result is the mark on their
+enrolment. Until a student is enrolled, both dashboards are empty however many
+accounts exist.
+
+Nothing needs a developer. A record that still has others attached — a
+department with programmes, a course with enrolments — refuses to be deleted
+and says what is holding it, rather than quietly taking them with it.
+
 ### Afterwards
 
 Everything entered during setup can be corrected from **Admin → Website content → College profile**,
@@ -254,6 +278,8 @@ Two things are the same in every copy and would need a code change:
 | Departments, faculty, notices, events, documents | the database | the admin panel |
 | Photographs and uploaded files | `var/uploads`, or Vercel Blob | the admin panel |
 | Staff, student and administrator logins | the database | Admin → Accounts |
+| Departments, programmes, courses, enrolments | the database | Admin → Academics, People & enrolment |
+| Events, facilities, scholarships, books, alumni, careers | the database | Admin → Campus & content |
 | Page layout, wording that is the same everywhere | the code | a developer |
 
 ## Uploading and changing pictures
@@ -338,7 +364,7 @@ app/
   uploads/[...path]/   Serves uploaded files — they cannot live under public/
   actions/             Server actions: setup, auth, admin, teaching, public forms, website content
 components/            Shared React components (header, nav, uploader, media gallery…)
-  admin/               The website-content editor: photo picker, forms, delete buttons
+  admin/               The admin editors: record manager, photo picker, forms
 lib/
   db.ts                Prisma client
   auth.ts              Sessions, password hashing, RBAC helpers
@@ -346,6 +372,8 @@ lib/
   site.ts              The institution — read from the database, never hardcoded
   setup.ts             Whether this copy has been claimed by a college yet
   example-content.ts   Neutral starter content offered during setup
+  resources.ts         What a college may enter, field by field — also the
+                       whitelist the record actions check against
   search.ts            Site-wide search
   i18n.ts              English / Urdu strings
 prisma/

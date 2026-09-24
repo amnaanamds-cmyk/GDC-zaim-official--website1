@@ -6,24 +6,13 @@ import { db } from '@/lib/db';
 import { site } from '@/lib/site';
 import { ATTENDANCE_THRESHOLD } from '@/lib/grading';
 import { fmtShort } from '@/lib/format';
-import PortalShell, { type PortalLink } from '@/components/PortalShell';
+import { adminNav } from '@/lib/admin-nav';
+import PortalShell from '@/components/PortalShell';
 import NoticeComposer from './NoticeComposer';
 import VerifyMarks from './VerifyMarks';
 
 export const metadata: Metadata = { title: 'Administration Dashboard' };
 export const dynamic = 'force-dynamic';
-
-const LINKS: PortalLink[] = [
-  { label: 'Dashboard', href: '/portal/admin', icon: 'grid' },
-  { label: 'Accounts', href: '/portal/admin/accounts', icon: 'users' },
-  { label: 'Website content', href: '/portal/admin/website', icon: 'image' },
-  { label: 'Event media', href: '/portal/admin/media', icon: 'mic' },
-  { label: 'Notices', href: '/portal/admin#notices', icon: 'bell' },
-  { label: 'Results verification', href: '/portal/admin#results', icon: 'chart' },
-  { label: 'Students', href: '/portal/admin#students', icon: 'users' },
-  { label: 'Complaints', href: '/portal/admin#complaints', icon: 'shield' },
-  { label: 'Activity log', href: '/portal/admin#activity', icon: 'file' },
-];
 
 export default async function AdminDashboard() {
   const inst = await site();
@@ -81,7 +70,7 @@ export default async function AdminDashboard() {
       user={user}
       title="Admin Panel"
       subtitle={inst.shortName}
-      links={LINKS}
+      links={adminNav('/portal/admin')}
       heading="Administration Dashboard"
     >
       <div className="kpi-grid">
